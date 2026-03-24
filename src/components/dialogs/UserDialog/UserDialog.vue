@@ -107,7 +107,7 @@
     import UserDialogAvatarsTab from './UserDialogAvatarsTab.vue';
     import UserDialogFavoriteWorldsTab from './UserDialogFavoriteWorldsTab.vue';
     import UserDialogGroupsTab from './UserDialogGroupsTab.vue';
-    import UserDialogInfoTab from './UserDialogInfoTab.vue';
+    import UserDialogInfoTab from './UserDialogInfoTabJirai.vue';
     import UserDialogMutualFriendsTab from './UserDialogMutualFriendsTab.vue';
     import UserDialogWorldsTab from './UserDialogWorldsTab.vue';
     import UserSummaryHeader from './UserSummaryHeader.vue';
