@@ -429,7 +429,7 @@ export const columns = [
  */
 
 //function getWordDifferences
-function formatDifference(
+export function formatDifference(
     oldString,
     newString,
     markerAddition = '<span class="x-text-added">{{text}}</span>',
