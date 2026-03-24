@@ -173,22 +173,13 @@
         </div>
         <div class="box-border flex items-center p-1.5 text-[13px] w-full cursor-default">
             <div class="flex-1 overflow-hidden">
-                <div class="flex items-center justify-between">
-                    <span class="block truncate font-medium leading-[18px]">{{ t('dialog.user.info.bio') }}</span>
-                    <div class="flex items-center gap-1.5 shrink-0">
-                        <Switch :model-value="bioDiffEnabled" class="scale-75" @update:model-value="toggleBioDiff" />
-                        <span class="text-xs text-muted-foreground">{{ t('dialog.user.info.bio_diff_toggle') }}</span>
-                    </div>
-                </div>
-                <template v-if="bioDiffEnabled">
-                    <pre
-                        v-if="bioDiffLines.length > 0"
-                        class="text-xs font-[inherit]"
-                        style="white-space: pre-wrap; margin: 0 0.5em 0 0; max-height: 210px; overflow-y: auto"
-                    ><template v-for="(line, idx) in bioDiffLines" :key="idx"><span
-                            :class="line.type === 'add' ? 'text-green-500' : line.type === 'del' ? 'text-red-500' : ''"
-                        >{{ line.text }}</span><br /></template></pre>
-                </template>
+                <span class="block truncate font-medium leading-[18px]">{{ t('dialog.user.info.bio') }}</span>
+                <pre
+                    v-if="bioDiffEnabled && bioDiffHtml"
+                    class="text-xs leading-5.5 font-[inherit]"
+                    style="white-space: pre-wrap; margin: 0 0.5em 0 0; max-height: 210px; overflow-y: auto"
+                    v-html="bioDiffHtml"
+                ></pre>
                 <pre
                     v-else
                     class="text-xs truncate font-[inherit]"
@@ -204,6 +195,15 @@
                         @click="translateBio">
                         <Spinner v-if="translateLoading" class="size-1" />
                         <Languages v-else class="h-3 w-3" />
+                    </Button>
+                    <Button
+                        v-if="currentUser.id !== userDialog.id"
+                        class="w-3 h-6 text-xs mr-0.5"
+                        size="icon-sm"
+                        :variant="bioDiffEnabled ? 'secondary' : 'ghost'"
+                        :aria-label="t('dialog.user.info.bio_diff_toggle')"
+                        @click="toggleBioDiff">
+                        <History class="h-3 w-3" />
                     </Button>
                     <Button
                         class="w-3 h-6 text-xs"
@@ -486,7 +486,7 @@
 </template>
 
 <script setup>
-    import { Copy, Image, Info, Languages, MoreHorizontal, Pencil, Trash2, User } from 'lucide-vue-next';
+    import { Copy, History, Image, Info, Languages, MoreHorizontal, Pencil, Trash2, User } from 'lucide-vue-next';
     import {
         DropdownMenu,
         DropdownMenuContent,
@@ -496,7 +496,6 @@
     import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
     import { ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
-    import { Switch } from '@/components/ui/switch';
     import { Spinner } from '@/components/ui/spinner';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
@@ -533,6 +532,7 @@
 
     import EditNoteAndMemoDialog from './EditNoteAndMemoDialog.vue';
     import { database } from '../../../services/database';
+    import { formatDifference } from '../../../views/Feed/columns.jsx';
 
     defineEmits(['showBioDialog']);
 
@@ -561,69 +561,25 @@
     const translateLoading = ref(false);
 
     const bioDiffEnabled = ref(false);
-    const bioDiffLines = ref([]);
-
-    /**
-     * Compute a simple line-level diff between oldText and newText.
-     * Returns an array of {type: 'del'|'add'|'eq', text: string}.
-     * @param {string} oldText
-     * @param {string} newText
-     * @returns {Array<{type:string,text:string}>}
-     */
-    function computeLineDiff(oldText, newText) {
-        const oldLines = (oldText || '').split('\n');
-        const newLines = (newText || '').split('\n');
-        const m = oldLines.length;
-        const n = newLines.length;
-
-        // LCS-based diff using DP
-        const dp = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));
-        for (let i = m - 1; i >= 0; i--) {
-            for (let j = n - 1; j >= 0; j--) {
-                if (oldLines[i] === newLines[j]) {
-                    dp[i][j] = dp[i + 1][j + 1] + 1;
-                } else {
-                    dp[i][j] = Math.max(dp[i + 1][j], dp[i][j + 1]);
-                }
-            }
-        }
-
-        const result = [];
-        let i = 0;
-        let j = 0;
-        while (i < m || j < n) {
-            if (i < m && j < n && oldLines[i] === newLines[j]) {
-                result.push({ type: 'eq', text: ' ' + oldLines[i] });
-                i++;
-                j++;
-            } else if (j < n && (i >= m || dp[i][j + 1] >= dp[i + 1][j])) {
-                result.push({ type: 'add', text: '+' + newLines[j] });
-                j++;
-            } else {
-                result.push({ type: 'del', text: '-' + oldLines[i] });
-                i++;
-            }
-        }
-        return result;
-    }
+    const bioDiffHtml = ref('');
 
     async function loadBioDiff() {
         const dialogUserId = userDialog.value.id;
         if (!dialogUserId) {
-            bioDiffLines.value = [];
+            bioDiffHtml.value = '';
             return;
         }
         const record = await database.getLastBioChangeForUser(dialogUserId);
         if (!record) {
-            bioDiffLines.value = [];
+            bioDiffHtml.value = '';
             return;
         }
-        bioDiffLines.value = computeLineDiff(record.previousBio || '', record.bio || '');
+        bioDiffHtml.value = formatDifference(record.previousBio || '', record.bio || '');
     }
 
-    function toggleBioDiff(val) {
-        bioDiffEnabled.value = val;
-        if (val) {
+    function toggleBioDiff() {
+        bioDiffEnabled.value = !bioDiffEnabled.value;
+        if (bioDiffEnabled.value) {
             loadBioDiff();
         }
     }
@@ -637,6 +593,7 @@
                         userId: null,
                         translated: null
                     };
+                    bioDiffHtml.value = '';
                 }
                 if (bioDiffEnabled.value) {
                     loadBioDiff();
@@ -788,3 +745,20 @@
         showEditNoteAndMemoDialog
     });
 </script>
+
+<style scoped>
+    :deep(.x-text-removed) {
+        text-decoration: line-through;
+        color: #ff0000;
+        background-color: rgba(255, 0, 0, 0.2);
+        padding: 2px 2px;
+        border-radius: 4px;
+    }
+
+    :deep(.x-text-added) {
+        color: rgb(35, 188, 35);
+        background-color: rgba(76, 255, 80, 0.2);
+        padding: 2px 2px;
+        border-radius: 4px;
+    }
+</style>
