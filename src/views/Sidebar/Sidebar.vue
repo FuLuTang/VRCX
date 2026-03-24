@@ -26,35 +26,37 @@
                         <RefreshCw v-else />
                     </Button>
                 </TooltipWrapper>
-                <ContextMenu v-if="hasUnseenNotifications">
-                    <ContextMenuTrigger as-child>
-                        <TooltipWrapper side="bottom" :content="t('side_panel.notification_center.title')">
-                            <Button
-                                class="rounded-full relative"
-                                variant="ghost"
-                                size="icon-sm"
-                                @click="isNotificationCenterOpen = !isNotificationCenterOpen">
-                                <Bell />
-                                <span class="absolute top-1 right-1.25 size-1.5 rounded-full bg-red-500" />
-                            </Button>
-                        </TooltipWrapper>
-                    </ContextMenuTrigger>
-                    <ContextMenuContent>
-                        <ContextMenuItem @click="markNotificationsRead">
-                            {{ t('nav_menu.mark_all_read') }}
-                        </ContextMenuItem>
-                    </ContextMenuContent>
-                </ContextMenu>
-                <TooltipWrapper v-else side="bottom" :content="t('side_panel.notification_center.title')">
-                    <Button
-                        class="rounded-full relative"
-                        variant="ghost"
-                        size="icon-sm"
-                        @click="isNotificationCenterOpen = !isNotificationCenterOpen"
-                        @contextmenu.prevent="toast.info(t('side_panel.notification_center.no_unseen_notifications'))">
-                        <Bell />
-                    </Button>
-                </TooltipWrapper>
+                <template v-if="notificationLayout !== 'table'">
+                    <ContextMenu v-if="hasUnseenNotifications">
+                        <ContextMenuTrigger as-child>
+                            <TooltipWrapper side="bottom" :content="t('side_panel.notification_center.title')">
+                                <Button
+                                    class="rounded-full relative"
+                                    variant="ghost"
+                                    size="icon-sm"
+                                    @click="isNotificationCenterOpen = !isNotificationCenterOpen">
+                                    <Bell />
+                                    <span class="absolute top-1 right-1.25 size-1.5 rounded-full bg-red-500" />
+                                </Button>
+                            </TooltipWrapper>
+                        </ContextMenuTrigger>
+                        <ContextMenuContent>
+                            <ContextMenuItem @click="markNotificationsRead">
+                                {{ t('nav_menu.mark_all_read') }}
+                            </ContextMenuItem>
+                        </ContextMenuContent>
+                    </ContextMenu>
+                    <TooltipWrapper v-else side="bottom" :content="t('side_panel.notification_center.title')">
+                        <Button
+                            class="rounded-full relative"
+                            variant="ghost"
+                            size="icon-sm"
+                            @click="isNotificationCenterOpen = !isNotificationCenterOpen"
+                            @contextmenu.prevent="toast.info(t('side_panel.notification_center.no_unseen_notifications'))">
+                            <Bell />
+                        </Button>
+                    </TooltipWrapper>
+                </template>
                 <Popover v-model:open="isSettingsPopoverOpen">
                     <PopoverTrigger as-child>
                         <Button class="rounded-full" variant="ghost" size="icon-sm">
@@ -94,32 +96,6 @@
 
                             <Separator />
 
-                            <!-- Sort Section -->
-                            <span class="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">
-                                {{ t('side_panel.settings.sort') }}
-                            </span>
-                            <Field>
-                                <FieldContent>
-                                    <Select
-                                        :model-value="sidebarSortMethod1"
-                                        @update:modelValue="setSidebarSortMethod1">
-                                        <SelectTrigger size="sm">
-                                            <SelectValue
-                                                :placeholder="
-                                                    t('view.settings.appearance.side_panel.sorting.placeholder')
-                                                " />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem v-for="opt in sortOptions" :key="opt.value" :value="opt.value">
-                                                {{ opt.label }}
-                                            </SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </FieldContent>
-                            </Field>
-
-                            <Separator />
-
                             <!-- Advanced Section (Collapsible) -->
                             <Collapsible v-model:open="isAdvancedOpen">
                                 <CollapsibleTrigger as-child>
@@ -139,6 +115,25 @@
                                             class="text-[10px] font-medium text-muted-foreground/70 uppercase tracking-wide">
                                             {{ t('side_panel.settings.sorting') }}
                                         </span>
+                                        <Field>
+                                            <FieldContent>
+                                                <Select
+                                                    :model-value="sidebarSortMethod1"
+                                                    @update:modelValue="setSidebarSortMethod1">
+                                                    <SelectTrigger size="sm">
+                                                        <SelectValue
+                                                            :placeholder="
+                                                                t('view.settings.appearance.side_panel.sorting.placeholder')
+                                                            " />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem v-for="opt in sortOptions" :key="opt.value" :value="opt.value">
+                                                            {{ opt.label }}
+                                                        </SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                            </FieldContent>
+                                        </Field>
                                         <Field>
                                             <FieldLabel>{{ t('side_panel.settings.sort_secondary') }}</FieldLabel>
                                             <FieldContent>
@@ -341,7 +336,8 @@
         useFavoriteStore,
         useFriendStore,
         useGroupStore,
-        useNotificationStore
+        useNotificationStore,
+        useNotificationsSettingsStore
     } from '../../stores';
     import { runRefreshFriendsListFlow } from '../../coordinators/friendSyncCoordinator';
     import { normalizeFavoriteGroupsChange, resolveFavoriteGroups } from './sidebarSettingsUtils';
@@ -357,6 +353,7 @@
     const { groupInstances } = storeToRefs(useGroupStore());
     const notificationStore = useNotificationStore();
     const { isNotificationCenterOpen, hasUnseenNotifications } = storeToRefs(notificationStore);
+    const { notificationLayout } = storeToRefs(useNotificationsSettingsStore());
     const quickSearchStore = useQuickSearchStore();
     const { t } = useI18n();
 

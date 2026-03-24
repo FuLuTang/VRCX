@@ -68,7 +68,7 @@
         "get_help": "GET HELP",
         "github": "VRCX on GitHub",
         "discord": "Join our Discord",
-        "whats_new": "What's New?",
+        "changelog": "Changelog",
         "update_available": "Update available",
         "update": "Update",
         "mark_all_read": "Mark All as Read",
@@ -985,6 +985,9 @@
             "notifications": {
                 "notifications": {
                     "header": "Notifications",
+                    "layout": "Notification Layout",
+                    "layout_notification_center": "Notification Center",
+                    "layout_table": "Table",
                     "notification_filter": "Notification Filter",
                     "test_notification": "Test Notification",
                     "steamvr_notifications": {
@@ -1910,6 +1913,7 @@
         },
         "invite_request_message": {
             "header": "Send Invite Request Message",
+            "confirmation": "Are you sure you want to send?",
             "cancel": "Cancel",
             "refresh": "Refresh"
         },
@@ -2650,7 +2654,7 @@
             "auto_login_failed": "Failed to login automatically.",
             "offline": "You're offline.",
             "login_network_issue_hint_title": "Having trouble signing in?",
-            "login_network_issue_hint_description": "Several recent sign-in attempts failed. If your credentials are correct, this may be caused by a network, proxy, VPN, or regional access issue."
+            "login_network_issue_hint_description": "Several recent sign-in attempts failed. Click Open for the troubleshooting guide."
         },
         "vrcx_updater": {
             "failed": "Failed to check for update, {message}",
@@ -3036,28 +3040,29 @@
             "cta": "Got It",
             "common": {
                 "got_it": "Got It",
-                "view_changelog": "View changelog",
+                "view_changelog": "View All Changes",
                 "support": "Support VRCX"
             },
             "releases": {
                 "2026_04_05": {
-                    "title": "What's New in VRCX",
+                    "title": "Explore New Features",
+                    "subtitle": "A few useful features you might not notice",
                     "items": {
                         "quick_search": {
                             "title": "Quick Search",
-                            "description": "Find users, worlds, and avatars in seconds."
+                            "description": "Press Ctrl+K (⌘K) to find users, worlds, groups, and avatars."
                         },
-                        "dashboard": {
-                            "title": "Dashboard",
-                            "description": "Build a workspace that fits how you use VRCX."
+                        "local_favorite_groups": {
+                            "title": "Local Favorites",
+                            "description": "Create unlimited custom friend groups beyond VRChat's limits."
                         },
-                        "activity_insights": {
-                            "title": "Activity Insights",
-                            "description": "See shared online time, Most Visited Worlds, and activity trends."
+                        "auto_status": {
+                            "title": "Auto Status",
+                            "description": "Auto-switch status based on friend presence, filtered by group."
                         },
-                        "my_avatars": {
-                            "title": "My Avatars",
-                            "description": "Browse and manage your avatars with less friction."
+                        "right_click_menus": {
+                            "title": "Context Menus",
+                            "description": "Right-click on friends, tables, and headers for quick actions."
                         }
                     }
                 }
