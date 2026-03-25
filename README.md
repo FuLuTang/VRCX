@@ -1,194 +1,72 @@
 <div align="center">
 
-# <img src="https://raw.githubusercontent.com/vrcx-team/VRCX/master/images/VRCX.ico" width="64" height="64"> VRCX-jirai
+# <img src="https://raw.githubusercontent.com/vrcx-team/VRCX/master/images/VRCX.ico" width="64" height="64"> VRCX-地雷Edition
 
 [![GitHub Workflow Status](https://github.com/FuLuTang/VRCX-jirai/actions/workflows/github_actions.yml/badge.svg)](https://github.com/FuLuTang/VRCX-jirai/actions/workflows/github_actions.yml)
 
-**专为地雷人打造的视奸神器**
+### **专为地雷人打造的视奸神器**
 
 </div>
 
-这是 [VRCX](https://github.com/vrcx-team/VRCX) 的个人分支。原版 VRCX 已经很好用了，但作为一名合格的地雷人，光知道朋友在不在线怎么够？你还需要知道 TA 和谁在一起、去了哪里、待了多久——于是就有了这个版本。
+这是 [VRCX](https://github.com/vrcx-team/VRCX) 的魔改分支。原版 VRCX 已经很好用了，但要想成为一名合格的 **地雷男/女**，光知道朋友在不在线怎么够？
 
-可以从 [Releases](https://github.com/FuLuTang/VRCX-jirai/releases/latest) 页面下载最新安装包（`VRCX_Setup.exe`）直接安装。如需从源码构建，请参考下方"从源码构建"说明。
+你还需要知道 TA 和谁在一起 ~~、去了哪里、待了多久、为什么不陪你玩~~ 👁️...
 
-# 核心特色：视奸
+于是就有了这个版本。
+
+- 可以从 [Releases](https://github.com/FuLuTang/VRCX-jirai/releases/latest) 页面下载最新安装包（`VRCX_Setup.exe`）直接安装。
+- 如果想下载测试最新的构建版本，请点击 [GitHub Actions](https://github.com/FuLuTang/VRCX-jirai/actions/workflows/github_actions.yml)。
+- 如需从源码构建，请参考下方"从源码构建"说明。
+
+# 核心功能
 
 <div align="left">
 
-本分支最核心的功能就一个字：**奸**。
-
-- :mag_right: **双人关系**（重点推荐）
-    - 从好友列表中选择两个人，查看这两人曾经在同一个房间里共存过的所有记录。
-    - 显示共存总时长、共同出现的次数，以及每次共存的具体时间、地点和持续时长。
+- :mag_right: **双人关系查询 (TwoPersonRelationship)** （核心推荐）
+    - 从你的好友列表中任选两人，一键查询他们**共同在一个房间待过的所有记录**。
+    - **极限细节**：不仅仅是共存时间，还能看到当时“房主是谁”、“最高达到过多少人数”，并且会标记**“你当时在不在场”**。
     - 换句话说：你想知道 A 和 B 到底有多熟吗？数据会告诉你答案。
-    - ⚠️ 查询优先基于 `OnPlayerLeft` 日志（精确实例共存）；另外也会结合好友的 GPS/上下线历史推断一部分“你没进过但两人可能共存过”的实例记录。
 
-</div>
+- :pencil2: **像查代码一样查签名记录 (Bio Diff View)** （新！）
+    - 去掉了原版干巴巴的简介历史，新增了一个类似 `Git Diff` 的界面。
+    - 朋友改了简介，**红字**代表删掉的话，**绿字**代表加进来的话。到底暗戳戳加了谁的名字还是一眼就能看出来！
+    - **24小时智能合并**：一天之内哪怕改了 10 次简介，也会自动合并成一条精简的差异记录。不再满屏垃圾信息。
 
-# 其他新增功能
+- :clock3: **关系时间轴 (Relationship Timeline)**
+    - 以时间流的形式，直观地列出你的时间分配都花在谁身上了。
 
-<div align="left">
-
-- :fire: **热门世界**（HotWorlds）
-    - 统计你在一段时间内（7 天 / 30 天 / 90 天）去得最多的世界，顺便反省一下自己的 VRC 人生。
-- :busts_in_silhouette: **共同好友**（MutualFriends）
-    - 查看你与某位好友之间有哪些共同好友。
-- :chart_with_upwards_trend: **房间活动分析**（InstanceActivity）
+- :chart_with_upwards_trend: **房间活动分析 (InstanceActivity)**
     - 可视化展示你进出各房间的活动记录，支持查看单个房间的详细进出历史。
-- **关系时间轴**
-    - 按时间快速展示你的时间都花在谁身上了。
 
 </div>
+
+# 原版体验优化
+
+- :fire: 解锁了 ~~不知为何原版做了但没开放的~~ **热门世界 (HotWorlds)** 功能
+    - 统计你在一段时间内（7 天 / 30 天 / 90 天）去得最多的世界，顺便反省一下自己的 VRC 人生。
+
+- **搜索功能增强 (Quick Search)**
+    - 在顶部的快捷搜索下拉列表中，额外展示了 **“最近遇到的人”** 和 **“最近加入的世界”**，方便快速查找刚才接触过的玩家和实例。
+
+- **新增好友签名存档工具 (System Tools)**
+    - 在“系统工具”中新增了 **“批量拉取并保存好友简介”** 的功能。适合在新设备或者初次使用本软件时，一键将所有好友当前的签名留底存档，以便更好地配合“查简介日志（Bio Diff）”功能使用。
+
+- **状态持续时间计时器修复**
+    - 修复了原版 VRCX 在重启后，会把好友当前“在这个房间停留了多久”的计时器强制归零的问题。现在只要好友还在原先的实例中，即使重启软件也会从本地日志恢复真实的加入时间戳，让停留时长显示更加准确。
+
+- **与原版 VRCX 同步**
+    - 持续跟进上游 `vrcx-team/VRCX` 更新，比如原版最新的 Electron 40 内核、原版新增的好友热力图等，用着魔改版也能享受最新功能。
 
 # 从源码构建
 
 请参考上游仓库的 [Building from source](https://github.com/vrcx-team/VRCX/wiki/Building-from-source) 说明进行构建。
 
----
-
-<div align="center">
-
-# <img src="https://raw.githubusercontent.com/vrcx-team/VRCX/master/images/VRCX.ico" width="64" height="64"> </img> VRCX（原版说明）
-
-[![GitHub release](https://img.shields.io/github/release/vrcx-team/VRCX.svg)](https://github.com/vrcx-team/VRCX/releases/latest)
-[![Downloads](https://img.shields.io/github/downloads/vrcx-team/VRCX/total?color=6451f1)](https://github.com/vrcx-team/VRCX/releases/latest)
-[![GitHub Workflow Status](https://github.com/vrcx-team/VRCX/actions/workflows/github_actions.yml/badge.svg)](https://github.com/vrcx-team/VRCX/actions/workflows/github_actions.yml)
-[![VRCX Discord Invite](https://img.shields.io/discord/854071236363550763?color=%237289DA&logo=discord&logoColor=white&label=discord)](https://vrcx.app/discord)
-
-| **English** | [Français](./README/README.fr.md) | [日本語](./README/README.jp.md) | [简体中文](./README/README.zh_CN.md) | [Italiano](./README/README.it.md) | [Русский](./README/README.ru_RU.md) | [Español](./README/README.es.md) | [Polski](./README/README.pl.md) | [ภาษาไทย](./README/README.th.md)
-
-VRCX is an assistant/companion application for VRChat that provides information about and helps you accomplish various things related to VRChat in a more convenient fashion than relying on the plain VRChat client (desktop or VR), or website alone. It also includes some other neat features outlined below.
-
-# Getting Started
-
-<div align="center">
-
-Download and install the latest installer (`VRCX_Setup.exe`) from [here](https://github.com/vrcx-team/VRCX/releases/latest).
-
-For macOS and Linux check [here](https://github.com/vrcx-team/VRCX/wiki/Running-VRCX-on-Linux) for more info.
-
-Beta/nightly build available [here](https://vrcx.app/github/nightly) or in-app `Settings -> General -> Change build`.
-
-# Features
-
-<div align="left">
-
-- :family: Friend, world, and avatar list management
-    - Manage your friends list, world/group/avatar lists outside of VRChat.
-    - Monitor the activity of your friends and track their online status, locations, and avatars.
-    - Track friendship history including add dates, time spent together, and name changes.
-    - Save notes and memos to help remember how you met.
-- :bar_chart: Customizable Dashboard with widgets
-    - Build personalized multi-panel layouts with Feed, GameLog, and Instance widgets.
-    - Create multiple dashboards, each with configurable event filters and column visibility.
-- :mag: Powerful search across all entities
-    - Search for users, worlds, avatars, and groups, or paste IDs and URLs for direct access.
-    - Quick Search provides instant client-side fuzzy search across your friends, avatars, worlds, and groups.
-- :chart_with_upwards_trend: Activity Heatmap
-    - Visualize a user's online activity patterns with a day-of-week × hour-of-day heatmap, including peak stats.
-- :camera: Store world data in the pictures you take in-game, so you can remember that one world you took those cool pictures in like... 6 months ago!
-- :bell: Monitor/respond to notifications
-    - You can send/receive invites and friend requests from VRCX as well as see the instance info of invites that you receive.
-- :scroll: See stats/players for your current instance
-- :tv: See the links to videos that are playing in the world you're in, as well as various other logged data.
-- :performing_arts: Social Status Presets
-    - Save and quickly apply status + status description combinations from the sidebar or user dialog.
-- :rotating_light: VRChat Server Status
-    - A status bar indicator and login page alert inform you of VRChat server issues and outages in real time.
-- :bar_chart: Improved Discord Rich Presence
-    - Display detailed instance information in Discord, including world thumbnail, name, player count, and a join button for public lobbies.
-- :crystal_ball: VR Overlay with configurable live feed of all supported events/notifications
-- :outbox_tray: Upload and manage avatar/world images and details without Unity
-- :electric_plug: Automatically launch apps when you start VRChat
-- :skull: Automatically restart and join last instance when VRC crashes
-- :left_right_arrow: Export/import data
-    - Export friends list, avatar list, Discord names, notes, and favorite groups. Import favorite groups and group moderation bans.
-
-## Miscellaneous
-
-- Want a new look for VRCX? Check out [Themes](https://github.com/vrcx-team/VRCX/wiki/Themes)
-- See [Building from source](https://github.com/vrcx-team/VRCX/wiki/Building-from-source) for instructions on how to build VRCX from source.
-- For a guide on how to run VRCX on Linux, see [here](https://github.com/vrcx-team/VRCX/wiki/Running-VRCX-on-Linux)
-- Interested in contributing? See [CONTRIBUTING.md](.github/CONTRIBUTING.md) for guidelines.
-
-# Screenshots
-
-<div align="center">
-
-<h3>Login</h3>
-
-<table>
-  <tr>
-    <td align="center"><img src="https://github-production-user-asset-6210df.s3.amazonaws.com/82102170/251994190-5e6a961e-b2fe-4d3b-bf66-455d8626b8bf.png" alt="login"></td>
-    <td align="center"><img src="https://github-production-user-asset-6210df.s3.amazonaws.com/82102170/251994414-a21faf59-6199-45de-94e7-a093a6b8c0ac.png" alt="2fa"></td>
-  </tr>
-</table>
-
-<h3>Feed</h3>
-
-<img src="https://github-production-user-asset-6210df.s3.amazonaws.com/82102170/251987020-9839a2c9-47db-4271-b1bf-8e07669a7056.png" alt="feed">
-
-<h3>GameLog</h3>
-
-<img src="https://github-production-user-asset-6210df.s3.amazonaws.com/82102170/251987498-b82266ed-131d-42ad-be2f-b167f24acf9f.png" alt="gamelog">
-
-<h3>UserInfo</h3>
-
-<h4>Me</h4>
-
-<img src="https://github-production-user-asset-6210df.s3.amazonaws.com/82102170/251990237-0c863d27-141c-4447-82de-4279ab8973ea.png" alt="me">
-
-<h4>Friend</h4>
-
-<img src="https://github-production-user-asset-6210df.s3.amazonaws.com/82102170/251989666-8f918786-e632-451d-be29-f92d2c681b80.png" alt="friend">
-
-<h3>World</h3>
-
-<table>
-  <tr>
-    <td align="center"><img src="https://github-production-user-asset-6210df.s3.amazonaws.com/82102170/251991003-37a986bb-470c-442b-8ada-31918f7b2017.png" alt="instance"></td>
-    <td align="center"><img src="https://github-production-user-asset-6210df.s3.amazonaws.com/82102170/251991217-0d40846f-ac08-48c0-8e4d-18c35fe0999b.png" alt="info"></td>
-  </tr>
-</table>
-
-<h3>Favorite</h3>
-
-<h4>Friend</h4>
-
-<img src="https://github-production-user-asset-6210df.s3.amazonaws.com/82102170/251992424-ba406d0f-787e-4e2d-89bd-4caa0a05d31f.png" alt="friend">
-
-<h4>World</h4>
-
-<img src="https://github-production-user-asset-6210df.s3.amazonaws.com/82102170/251992950-8f2c6cdc-dc9a-4a60-b59f-9fa80d071359.png" alt="world">
-
-<h4>Avatar</h4>
-
-<img src="https://github-production-user-asset-6210df.s3.amazonaws.com/82102170/251993408-66d11100-15a8-484f-b9fd-82be1516c9be.png" alt="avatar">
-
-<h3>Friend Log</h3>
-
-<img src="https://github-production-user-asset-6210df.s3.amazonaws.com/82102170/251993741-e2033095-4ceb-4552-8b79-9285325c1e49.png" alt="friendlog">
-
-<h3>Discord Rich Presence</h3>
-
-<img src="https://github-production-user-asset-6210df.s3.amazonaws.com/82102170/251997318-5a71249c-59fc-4ad6-9194-d6b1d4165600.png" alt="discord">
-
-</div>
-
-## Is VRCX against VRChat's TOS?
-
-**No.**
-
-VRCX is an external tool that uses the VRChat API to provide the features it does.
-
-It does not modify the game in any way, only using the API responsibly to provide the features it does. It is not a mod, or a cheat, or any other form of modification to the game.
-
-To see VRChat's stance on API usage, see the #faq channel in the VRChat Discord.
+# Contact 社群
+QQ群号: `1043634732`
 
 ---
 
-VRCX is not endorsed by VRChat and does not reflect the views or opinions of VRChat or anyone officially involved in producing or managing VRChat properties. VRChat and all associated properties are trademarks or registered trademarks of VRChat Inc. VRChat © VRChat Inc.
+VRCX-jirai Edition is not endorsed by VRChat and does not reflect the views or opinions of VRChat or anyone officially involved in producing or managing VRChat properties. VRChat and all associated properties are trademarks or registered trademarks of VRChat Inc. VRChat © VRChat Inc.
 
 ## Star History
 
