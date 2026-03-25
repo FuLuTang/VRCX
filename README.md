@@ -45,13 +45,13 @@
 - :fire: 解锁了 ~~不知为何原版做了但没开放的~~ **热门世界 (HotWorlds)** 功能
     - 统计你在一段时间内（7 天 / 30 天 / 90 天）去得最多的世界，顺便反省一下自己的 VRC 人生。
 
-- **搜索功能增强 (Quick Search)**
+- **搜索功能 增强 (Quick Search)**
     - 在顶部的快捷搜索下拉列表中，额外展示了 **“最近遇到的人”** 和 **“最近加入的世界”**，方便快速查找刚才接触过的玩家和实例。
 
-- **新增好友签名存档工具 (System Tools)**
+- **新增 好友签名存档工具 (System Tools)**
     - 在“系统工具”中新增了 **“批量拉取并保存好友简介”** 的功能。适合在新设备或者初次使用本软件时，一键将所有好友当前的签名留底存档，以便更好地配合“查简介日志（Bio Diff）”功能使用。
 
-- **状态持续时间计时器修复**
+- **状态持续时间 计时器修复**
     - 修复了原版 VRCX 在重启后，会把好友当前“在这个房间停留了多久”的计时器强制归零的问题。现在只要好友还在原先的实例中，即使重启软件也会从本地日志恢复真实的加入时间戳，让停留时长显示更加准确。
 
 - **与原版 VRCX 同步**
@@ -66,7 +66,7 @@ QQ群号: `1043634732`
 
 ---
 
-VRCX-jirai Edition is not endorsed by VRChat and does not reflect the views or opinions of VRChat or anyone officially involved in producing or managing VRChat properties. VRChat and all associated properties are trademarks or registered trademarks of VRChat Inc. VRChat © VRChat Inc.
+> VRCX-jirai Edition is not endorsed by VRChat and does not reflect the views or opinions of VRChat or anyone officially involved in producing or managing VRChat properties. VRChat and all associated properties are trademarks or registered trademarks of VRChat Inc. VRChat © VRChat Inc.
 
 ## Star History
 
