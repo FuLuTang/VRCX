@@ -560,57 +560,8 @@
     const vrchatCredit = ref(null);
     const translateLoading = ref(false);
 
-<<<<<<< HEAD
-    const bioDiffEnabled = ref(false);
-    const bioDiffHtml = ref('');
-=======
     const bioDiffEnabled = ref(true);
-    const bioDiffLines = ref([]);
-
-    /**
-     * Compute a simple line-level diff between oldText and newText.
-     * Returns an array of {type: 'del'|'add'|'eq', text: string}.
-     * @param {string} oldText
-     * @param {string} newText
-     * @returns {Array<{type:string,text:string}>}
-     */
-    function computeLineDiff(oldText, newText) {
-        const oldLines = (oldText || '').split('\n');
-        const newLines = (newText || '').split('\n');
-        const m = oldLines.length;
-        const n = newLines.length;
-
-        // LCS-based diff using DP
-        const dp = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));
-        for (let i = m - 1; i >= 0; i--) {
-            for (let j = n - 1; j >= 0; j--) {
-                if (oldLines[i] === newLines[j]) {
-                    dp[i][j] = dp[i + 1][j + 1] + 1;
-                } else {
-                    dp[i][j] = Math.max(dp[i + 1][j], dp[i][j + 1]);
-                }
-            }
-        }
-
-        const result = [];
-        let i = 0;
-        let j = 0;
-        while (i < m || j < n) {
-            if (i < m && j < n && oldLines[i] === newLines[j]) {
-                result.push({ type: 'eq', text: oldLines[i] });
-                i++;
-                j++;
-            } else if (j < n && (i >= m || dp[i][j + 1] >= dp[i + 1][j])) {
-                result.push({ type: 'add', text: newLines[j] });
-                j++;
-            } else {
-                result.push({ type: 'del', text: oldLines[i] });
-                i++;
-            }
-        }
-        return result;
-    }
->>>>>>> origin/copilot/add-relationship-timeline-page
+    const bioDiffHtml = ref('');
 
     async function loadBioDiff() {
         const dialogUserId = userDialog.value.id;
@@ -618,31 +569,23 @@
             bioDiffHtml.value = '';
             return;
         }
-<<<<<<< HEAD
-        const record = await database.getLastBioChangeForUser(dialogUserId);
-        if (!record) {
+        const records = await database.getRecentBioChangesForUser(dialogUserId, 50);
+        if (!records || records.length === 0) {
             bioDiffHtml.value = '';
             return;
         }
-        bioDiffHtml.value = formatDifference(record.previousBio || '', record.bio || '');
-=======
-        const records = await database.getRecentBioChangesForUser(dialogUserId, 50);
-        if (!records || records.length === 0) {
-            bioDiffLines.value = [];
-            return;
-        }
-        
+
         const latestRecord = records[0];
         let baseBio = latestRecord.previousBio || '';
         const DAY_IN_MS = 24 * 60 * 60 * 1000;
-        
+
         for (let i = 1; i < records.length; i++) {
             if (i + 1 < records.length) {
                 const prevChange = records[i];
                 const olderChange = records[i + 1];
                 const t1 = new Date(prevChange.createdAt).getTime();
                 const t2 = new Date(olderChange.createdAt).getTime();
-                
+
                 if (t1 - t2 <= DAY_IN_MS) {
                     baseBio = olderChange.previousBio || '';
                 } else {
@@ -652,9 +595,8 @@
                 break;
             }
         }
-        
-        bioDiffLines.value = computeLineDiff(baseBio, latestRecord.bio || '');
->>>>>>> origin/copilot/add-relationship-timeline-page
+
+        bioDiffHtml.value = formatDifference(baseBio, latestRecord.bio || '');
     }
 
     function toggleBioDiff() {
