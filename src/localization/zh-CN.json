@@ -70,6 +70,8 @@
     },
     "side_panel": {
         "search_placeholder": "搜索",
+        "search_recently_met": "最近遇到的人",
+        "search_recently_joined": "最近加入的世界",
         "search_result_active": "活跃",
         "search_result_offline": "离线",
         "search_result_more": "搜索更多：",

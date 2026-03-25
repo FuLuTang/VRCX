@@ -173,6 +173,8 @@
         "search_groups": "Groups",
         "search_own_groups": "Own Groups",
         "search_joined_groups": "Joined Groups",
+        "search_recently_met": "Recently Met",
+        "search_recently_joined": "Recently Joined Worlds",
         "search_result_active": "Offline",
         "search_result_offline": "Active",
         "search_result_more": "Search More:",
