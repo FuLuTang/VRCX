@@ -153,14 +153,10 @@
 
                 <div class="mx-auto mt-3 in-[.is-compact-table]:mt-1.5! in-[.is-comfortable-table]:mt-2! max-w-[900px]">
                     <button
-                        v-for="(item, index) in sharedInstances"
+                        v-for="item in sharedInstances"
                         :key="item.location + '_' + item.friendALeave"
                         type="button"
                         class="group flex w-full items-center gap-3 rounded-lg px-3 py-2 in-[.is-compact-table]:py-1! in-[.is-comfortable-table]:py-1.5! text-left transition-colors hover:bg-accent">
-                        <span class="w-6 shrink-0 text-right font-mono text-sm font-bold text-muted-foreground">
-                            #{{ index + 1 }}
-                        </span>
-
                         <div class="w-32 shrink-0 text-xs text-muted-foreground tabular-nums">
                             {{ item.formattedDate }}
                         </div>
@@ -189,6 +185,11 @@
                             </div>
                         </div>
 
+                        <div class="flex shrink-0 items-center gap-1 text-xs text-muted-foreground">
+                            <Clock class="size-3 shrink-0" />
+                            <span class="font-medium tabular-nums">{{ timeToText(item.coexistenceTime, true) }}</span>
+                        </div>
+
                         <span
                             v-if="showSelfPresence"
                             :class="[
@@ -203,11 +204,6 @@
                                     : t('view.charts.two_person_relationship.self_not_present')
                             }}
                         </span>
-
-                        <div class="flex shrink-0 items-center gap-1 text-xs text-muted-foreground">
-                            <Clock class="size-3 shrink-0" />
-                            <span class="font-medium tabular-nums">{{ timeToText(item.coexistenceTime, true) }}</span>
-                        </div>
                     </button>
                 </div>
             </template>
