@@ -97,18 +97,37 @@ export function applyUser(json) {
             const player = locationStore.lastLocation.playerList.get(json.id);
             ref.$location_at = player.joinTime;
             ref.$online_for = player.joinTime;
-        } else if (ref.isFriend && isRealInstance(ref.location)) {
+        } else if (
+            ref.isFriend &&
+            ref.location &&
+            ref.location !== ':' && // ':' is the empty/invalid location sentinel
+            !ref.location.startsWith('offline') &&
+            !ref.location.startsWith('traveling')
+        ) {
             // Restore $location_at from DB so the "time in instance" timer
             // doesn't reset to zero after VRCX restarts.
+            // Primary source: _feed_gps (covers both real and private instances).
+            // Fallback: gamelog_join_leave (only available when sharing an instance).
             const _ref = ref;
             database
-                .getLastJoinTimeForUserAtLocation(
-                    { id: _ref.id, displayName: _ref.displayName },
-                    _ref.location
-                )
-                .then((joinTime) => {
-                    if (joinTime !== null && joinTime < Date.now()) {
-                        _ref.$location_at = joinTime;
+                .getLastGPSArrivalTimeForUser(_ref.id, _ref.location)
+                .then(async (arrivalTime) => {
+                    if (arrivalTime !== null && arrivalTime < Date.now()) {
+                        _ref.$location_at = arrivalTime;
+                        return;
+                    }
+                    if (isRealInstance(_ref.location)) {
+                        const joinTime =
+                            await database.getLastJoinTimeForUserAtLocation(
+                                {
+                                    id: _ref.id,
+                                    displayName: _ref.displayName
+                                },
+                                _ref.location
+                            );
+                        if (joinTime !== null && joinTime < Date.now()) {
+                            _ref.$location_at = joinTime;
+                        }
                     }
                 })
                 .catch(() => {});
