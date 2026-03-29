@@ -1,0 +1,219 @@
+:
+:
+:
+GAMELOG_LOCATION (pub): id, created_at, location, time, group_name, #world_id > WORLD (pub) > world_id
+:
+GAMELOG_JOIN_LEAVE (pub): id, created_at, type, display_name, user_id, time, #location > GAMELOG_LOCATION (pub) > location
+:
+MUTUAL_GRAPH_FRIENDS_OLD (pri): friend_id, last_updated
+:
+:
+:
+:
+:
+:
+:
+:
+:
+:
+:
+:
+:
+
+:
+FAVORITE_WORLD (pub): id, created_at, group_name, #world_id > WORLD (pub) > world_id
+:
+WORLD (pub): world_id, name, description, author_id, author_name, image_url, release_status, thumbnail_image_url, version
+:
+WORLD_MEMO (pub): #world_id > WORLD (pub) > world_id, edited_at, memo
+:
+MUTUAL_GRAPH_LINKS_OLD (pri): #friend_id > MUTUAL_GRAPH_FRIENDS_OLD (pri) > friend_id, #mutual_id > MUTUAL_GRAPH_FRIENDS_OLD (pri) > friend_id, date
+:
+FEED_ONLINE_OFFLINE (pri): id, created_at, type, location, world_name, time, group_name, #user_id > USER (pri) > user_id
+:
+:
+:
+:
+:
+:
+:
+:
+:
+:
+:
+
+:
+:
+:
+:
+:
+:
+:
+FRIEND_LOG_CURRENT (pri): #user_id > USER (pri) > user_id, display_name, trust_level, friend_number
+:
+ACTIVITY_SESSION_V2 (pri): session_id, start_at, end_at, is_open_tail, source_revision, #user_id > USER (pri) > user_id
+:
+NOTES (pri): #user_id > USER (pri) > user_id, display_name, note, created_at
+:
+NOTIFICATION (pri): id, created_at, type, message, world_name, image_url, invite_message, request_message, response_message, expired, #sender_user_id > USER (pri) > user_id, #receiver_user_id > USER (pri) > user_id
+:
+FEED_AVATAR (pri): id, created_at, owner_id, avatar_name, current_avatar_image_url, current_avatar_thumbnail_image_url, #user_id > USER (pri) > user_id
+:
+:
+:
+:
+:
+
+:
+:
+:
+:
+:
+:
+:
+:
+:
+ACTIVITY_SYNC_STATE_V2 (pri): #user_id > USER (pri) > user_id, updated_at, is_self, source_last_created_at, pending_session_start_at, cached_range_days
+:
+USER (pri): user_id, display_name, trust_level, friend_number
+:
+MODERATION (pri): #user_id > USER (pri) > user_id, updated_at, display_name, block, mute
+:
+:
+:
+:
+:
+:
+:
+
+:
+:
+:
+:
+:
+:
+:
+FRIEND_LOG_HISTORY (pri): id, created_at, type, display_name, previous_display_name, trust_level, previous_trust_level, friend_number, #user_id > USER (pri) > user_id
+:
+FEED_GPS (pri): id, created_at, location, world_name, previous_location, time, group_name, #user_id > USER (pri) > user_id
+:
+FEED_BIO (pri): id, created_at, bio, previous_bio, #user_id > USER (pri) > user_id
+:
+ACTIVITY_BUCKET_CACHE_V2 (pri): #user_id > USER (pri) > user_id, target_user_id, range_days, view_kind, exclude_key, summary_json, built_at
+:
+FEED_STATUS (pri): id, created_at, status, status_description, previous_status, previous_status_description, #user_id > USER (pri) > user_id
+:
+:
+:
+:
+:
+
+:
+:
+:
+:
+:
+:
+:
+:
+:
+FAVORITE_FRIEND (pub): id, created_at, group_name, #user_id_ref > USER (pri) > user_id
+:
+:
+:
+MEMO (pub): #user_id_ref2 > USER (pri) > user_id, edited_at, memo
+:
+:
+:
+:
+:
+:
+:
+
+:
+:
+:
+:
+:
+:
+:
+:
+:
+:
+:
+:
+:
+:
+:
+:
+:
+:
+:
+:
+:
+
+:
+:
+:
+:
+:
+:
+:
+:
+:
+:
+:
+:
+:
+:
+:
+:
+:
+AVATAR_TAG (pub): #avatar_id > AVATAR (pub) > avatar_id, tag, color
+:
+:
+:
+
+:
+:
+:
+:
+:
+MUTUAL_GRAPH_FRIENDS (pri): friend_id
+:
+:
+:
+:
+:
+:
+:
+:
+:
+AVATAR_MEMO (pub): #avatar_id > AVATAR (pub) > avatar_id, edited_at, memo
+:
+AVATAR (pub): avatar_id, name, author_id, author_name, description, image_url, release_status, thumbnail_image_url, version
+:
+FAVORITE_AVATAR (pub): id, created_at, group_name, #avatar_id > AVATAR (pub) > avatar_id
+:
+
+:
+:
+:
+:
+:
+MUTUAL_GRAPH_LINKS (pri): #friend_id > MUTUAL_GRAPH_FRIENDS (pri) > friend_id, #mutual_id > MUTUAL_GRAPH_FRIENDS (pri) > friend_id
+:
+:
+:
+:
+:
+:
+:
+:
+:
+:
+:
+AVATAR_HISTORY (pri): #avatar_id > AVATAR (pub) > avatar_id, created_at, time
+:
+:
+:

@@ -17,7 +17,7 @@
     VIProductVersion "${PRODUCT_VERSION}"
     VIFileVersion "${VERSION}"
     VIAddVersionKey "FileVersion" "${VERSION}"
-    VIAddVersionKey "ProductName" "VRCX"
+    VIAddVersionKey "ProductName" "VRCX-Jirai"
     VIAddVersionKey "ProductVersion" "${PRODUCT_VERSION}"
     VIAddVersionKey "LegalCopyright" "Copyright vrcx-team, pypy, natsumi"
     VIAddVersionKey "FileDescription" "Friendship management tool for VRChat"
@@ -34,10 +34,10 @@
 
     SetCompressor /SOLID lzma
     Unicode True
-    Name "VRCX"
-    OutFile "VRCX_Setup.exe"
-    InstallDir "$PROGRAMFILES64\VRCX"
-    InstallDirRegKey HKLM "Software\VRCX" "InstallDir"
+    Name "VRCX-Jirai"
+    OutFile "VRCX-Jirai_Setup.exe"
+    InstallDir "$PROGRAMFILES64\VRCX-Jirai"
+    InstallDirRegKey HKLM "Software\VRCX-Jirai" "InstallDir"
     RequestExecutionLevel admin
     ShowInstDetails show
 
@@ -73,7 +73,7 @@
 
     ; Checkbox to launch VRCX.
     !define MUI_FINISHPAGE_RUN
-    !define MUI_FINISHPAGE_RUN_TEXT "Launch VRCX"
+    !define MUI_FINISHPAGE_RUN_TEXT "Launch VRCX-Jirai"
     !define MUI_FINISHPAGE_RUN_FUNCTION launchVRCX
 
     ; Checkbox to create desktop shortcut.
@@ -108,19 +108,19 @@ FunctionEnd
 Function .onInit
     StrCpy $upgradeInstallation 0
 
-    ReadRegStr $R0 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX" "UninstallString"
+    ReadRegStr $R0 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX-Jirai" "UninstallString"
     StrCmp $R0 "" notInstalled
         StrCpy $upgradeInstallation 1
     notInstalled:
 
     ; If VRCX is already running, display a warning message
     loop:
-    StrCpy $1 "VRCX.exe"
+    StrCpy $1 "VRCX-Jirai.exe"
     nsProcess::_FindProcess "$1"
     Pop $R1
     ${If} $R1 = 0
-        MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION "VRCX is still running. $\n$\nClick `OK` to kill the running process or `Cancel` to cancel this installer." /SD IDOK IDCANCEL cancel
-            nsExec::ExecToStack "taskkill /IM VRCX.exe"
+        MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION "VRCX-Jirai 依旧在运行。$\n$\n点击“确定”结束进程，或者“取消”退出安装程序。" /SD IDOK IDCANCEL cancel
+            nsExec::ExecToStack "taskkill /IM VRCX-Jirai.exe"
     ${Else}
         Goto done
     ${EndIf}
@@ -139,12 +139,12 @@ Function .onInstSuccess
 FunctionEnd
 
 Function createDesktopShortcut
-    CreateShortcut "$DESKTOP\VRCX.lnk" "$INSTDIR\VRCX.exe"
+    CreateShortcut "$DESKTOP\VRCX-Jirai.lnk" "$INSTDIR\VRCX-Jirai.exe"
 FunctionEnd
 
 Function launchVRCX
     SetOutPath $INSTDIR
-    ShellExecAsUser::ShellExecAsUser "" "$INSTDIR\VRCX.exe" ""
+    ShellExecAsUser::ShellExecAsUser "" "$INSTDIR\VRCX-Jirai.exe" ""
 FunctionEnd
 
 ;--------------------------------
@@ -168,34 +168,34 @@ Section "Install" SecInstall
 
     File /r /x *.log /x *.pdb "..\build\Cef\*.*"
 
-    WriteRegStr HKLM "Software\VRCX" "InstallDir" $INSTDIR
+    WriteRegStr HKLM "Software\VRCX-Jirai" "InstallDir" $INSTDIR
     WriteUninstaller "$INSTDIR\Uninstall.exe"
-    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX" "DisplayName" "VRCX"
-    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX" "Publisher" "vrcx-team"
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX-Jirai" "DisplayName" "VRCX-Jirai"
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX-Jirai" "Publisher" "FuLuTang"
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX" "DisplayVersion" "${VERSION}"
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX" "DisplayArch" "x64"
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX" "InstallLocation" "$INSTDIR"
-    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX" "UninstallString" "$\"$INSTDIR\Uninstall.exe$\""
-    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX" "DisplayIcon" "$\"$INSTDIR\VRCX.ico$\""
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX-Jirai" "UninstallString" "$\"$INSTDIR\Uninstall.exe$\""
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX-Jirai" "DisplayIcon" "$\"$INSTDIR\VRCX.ico$\""
 
     ${GetSize} "$INSTDIR" "/S=0K" $0 $1 $2
     IntFmt $0 "0x%08X" $0
-    WriteRegDWORD HKLM  "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX" "EstimatedSize" "$0"
+    WriteRegDWORD HKLM  "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX-Jirai" "EstimatedSize" "$0"
 
     ${GetParameters} $R2
     ${GetOptions} $R2 /SKIP_SHORTCUT= $3
     StrCmp $3 "true" noShortcut
-        CreateShortCut "$SMPROGRAMS\VRCX.lnk" "$INSTDIR\VRCX.exe"
-        ApplicationID::Set "$SMPROGRAMS\VRCX.lnk" "VRCX"
+        CreateShortCut "$SMPROGRAMS\VRCX-Jirai.lnk" "$INSTDIR\VRCX-Jirai.exe"
+        ApplicationID::Set "$SMPROGRAMS\VRCX-Jirai.lnk" "VRCX-Jirai"
     noShortcut:
 
-    WriteRegStr HKCU "Software\Classes\vrcx" "" "URL:vrcx"
-    WriteRegStr HKCU "Software\Classes\vrcx" "FriendlyTypeName" "VRCX"
+    WriteRegStr HKCU "Software\Classes\vrcx-jirai" "" "URL:vrcx-jirai"
+    WriteRegStr HKCU "Software\Classes\vrcx-jirai" "FriendlyTypeName" "VRCX-Jirai"
     WriteRegStr HKCU "Software\Classes\vrcx" "URL Protocol" ""
     WriteRegExpandStr HKCU "Software\Classes\vrcx\DefaultIcon" "" "$INSTDIR\VRCX.ico"
     WriteRegStr HKCU "Software\Classes\vrcx\shell" "" "open"
-    WriteRegStr HKCU "Software\Classes\vrcx\shell\open" "FriendlyAppName" "VRCX"
-    WriteRegStr HKCU "Software\Classes\vrcx\shell\open\command" "" '"$INSTDIR\VRCX.exe" /uri="%1" /params="%2 %3 %4"'
+    WriteRegStr HKCU "Software\Classes\vrcx-jirai\shell\open" "FriendlyAppName" "VRCX-Jirai"
+    WriteRegStr HKCU "Software\Classes\vrcx-jirai\shell\open\command" "" '"$INSTDIR\VRCX-Jirai.exe" /uri="%1" /params="%2 %3 %4"'
 SectionEnd
 
 ;--------------------------------
@@ -203,22 +203,22 @@ SectionEnd
 
 Section "Uninstall"
     ; If VRCX is already running, display a warning message and exit
-    StrCpy $1 "VRCX.exe"
+    StrCpy $1 "VRCX-Jirai.exe"
     nsProcess::_FindProcess "$1"
     Pop $R1
     ${If} $R1 = 0
-        MessageBox MB_OK|MB_ICONEXCLAMATION "VRCX is still running. Cannot uninstall this software.$\nPlease close VRCX and try again." /SD IDOK
+        MessageBox MB_OK|MB_ICONEXCLAMATION "VRCX-Jirai 依旧在运行。无法卸载此软件。$\n请先关闭 VRCX-Jirai 并重试。" /SD IDOK
         Abort
     ${EndIf}
 
     RMDir /r "$INSTDIR"
 
-    DeleteRegKey HKLM "Software\VRCX"
-    DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX"
-    DeleteRegKey HKCU "Software\Classes\vrcx"
+    DeleteRegKey HKLM "Software\VRCX-Jirai"
+    DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX-Jirai"
+    DeleteRegKey HKCU "Software\Classes\vrcx-jirai"
 
     ${IfNot} ${Silent}
         Delete "$SMPROGRAMS\VRCX.lnk"
-        Delete "$DESKTOP\VRCX.lnk"
+        Delete "$DESKTOP\VRCX-Jirai.lnk"
     ${EndIf}
 SectionEnd

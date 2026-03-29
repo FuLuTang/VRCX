@@ -283,20 +283,23 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
         return { downloadUrl, hashString, size };
     }
     async function checkForVRCXUpdate() {
-        /*
-         * [Jirai Edition Update Mechanism Planning]
-         * To properly implement auto-updates in the future without modifying C# double-zip extraction:
-         * 1. Nightly (Actions): Add a step in `.github/workflows/github_actions.yml` to extract `VRCX_Setup.exe`
-         *    and push it to a fixed "Nightly" or "Continuous Build" Pre-release on GitHub. This gives anonymous download access.
-         * 2. Stable (Releases): Point `settings.js` config to `https://api.github.com/repos/FuLuTang/VRCX-jirai/releases/latest`.
-         * 
-         * Currently: Disabling the original VRCX updater to prevent users' clients from downloading official VRCX updates 
-         * and overwriting/losing all jirai modifications. Clicking 'Update' in the UI will open the releases page instead.
-         */
-        return false;
+        if (noUpdater.value) {
+            return false;
+        }
+        await loadBranchVersions();
+        const latestVersionName = VRCXUpdateDialog.value.release;
+        if (latestVersionName) {
+            latestAppVersion.value = latestVersionName;
+            if (latestVersionName !== currentVersion.value) {
+                pendingVRCXUpdate.value = true;
+            }
+        }
+        return true;
     }
     async function showVRCXUpdateDialog() {
-        return false;
+        VRCXUpdateDialog.value.visible = true;
+        await loadBranchVersions();
+        return true;
     }
 
     async function loadBranchVersions() {

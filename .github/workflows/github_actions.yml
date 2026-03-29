@@ -1,7 +1,15 @@
-name: VRCX
+name: VRCX-Jirai
 
 on:
-    - workflow_dispatch
+    workflow_dispatch:
+        inputs:
+            release:
+                description: '是否同步创建 GitHub Release?'
+                type: boolean
+                default: false
+    push:
+        tags:
+            - '202*'
 
 concurrency:
     group: ${{ github.ref }}
@@ -87,8 +95,8 @@ jobs:
                       ${{ github.workspace }}\build\Cef\libEGL.dll
                       ${{ github.workspace }}\build\Cef\libGLESv2.dll
                       ${{ github.workspace }}\build\Cef\librsync.net.dll
-                      ${{ github.workspace }}\build\Cef\VRCX.dll
-                      ${{ github.workspace }}\build\Cef\VRCX.exe
+                      ${{ github.workspace }}\build\Cef\VRCX-Jirai.dll
+                      ${{ github.workspace }}\build\Cef\VRCX-Jirai.exe
 
             - name: Download Cef-html artifacts
               uses: actions/download-artifact@v6
@@ -104,9 +112,9 @@ jobs:
                   additional-plugin-paths: Installer/Plugins
             - name: Rename setup
               run: |
-                  file_name="VRCX_${{ needs.set_version.outputs.version }}_Setup.exe"
+                  file_name="VRCX-Jirai_${{ needs.set_version.outputs.version }}_Setup.exe"
                   echo "Setup FileName: ${file_name}"
-                  mv Installer/VRCX_Setup.exe $file_name
+                  mv Installer/VRCX-Jirai_Setup.exe $file_name
             - name: Sign Cef setup
               uses: azure/trusted-signing-action@v0
               if: steps.check_sign.outputs.sign == 'true'
@@ -121,7 +129,7 @@ jobs:
                   timestamp-rfc3161: http://timestamp.acs.microsoft.com
                   timestamp-digest: SHA256
                   files: |
-                      ${{ github.workspace }}\VRCX_${{ needs.set_version.outputs.version }}_Setup.exe
+                      ${{ github.workspace }}\VRCX-Jirai_${{ needs.set_version.outputs.version }}_Setup.exe
 
             - name: Upload Cef dotnet artifacts
               uses: actions/upload-artifact@v5
@@ -132,7 +140,7 @@ jobs:
               uses: actions/upload-artifact@v5
               with:
                   name: Cef-Setup
-                  path: VRCX_${{ needs.set_version.outputs.version }}_Setup.exe
+                  path: VRCX-Jirai_${{ needs.set_version.outputs.version }}_Setup.exe
 
     build_dotnet_linux:
         runs-on: ubuntu-latest
@@ -263,7 +271,7 @@ jobs:
               uses: actions/upload-artifact@v5
               with:
                   name: Electron-AppImage-x64
-                  path: 'build/VRCX_${{ needs.set_version.outputs.version }}_x64.AppImage'
+                  path: 'build/VRCX-Jirai_${{ needs.set_version.outputs.version }}_x64.AppImage'
 
             - name: Download Electron arm64 dotnet artifacts
               uses: actions/download-artifact@v6
@@ -276,7 +284,7 @@ jobs:
               uses: actions/upload-artifact@v5
               with:
                   name: Electron-AppImage-arm64
-                  path: 'build/VRCX_${{ needs.set_version.outputs.version }}_arm64.AppImage'
+                  path: 'build/VRCX-Jirai_${{ needs.set_version.outputs.version }}_arm64.AppImage'
 
     build_macos:
         runs-on: macos-latest
@@ -318,7 +326,7 @@ jobs:
               uses: actions/upload-artifact@v5
               with:
                   name: Electron-MacDmg-x64
-                  path: 'build/VRCX_${{ needs.set_version.outputs.version }}_x64.dmg'
+                  path: 'build/VRCX-Jirai_${{ needs.set_version.outputs.version }}_x64.dmg'
 
             - name: Cleanup
               run: |
@@ -338,7 +346,7 @@ jobs:
               uses: actions/upload-artifact@v5
               with:
                   name: Electron-MacDmg-arm64
-                  path: 'build/VRCX_${{ needs.set_version.outputs.version }}_arm64.dmg'
+                  path: 'build/VRCX-Jirai_${{ needs.set_version.outputs.version }}_arm64.dmg'
 
     create_setup:
         runs-on: ubuntu-latest
@@ -369,7 +377,7 @@ jobs:
 
             - name: Make zip
               run: |
-                  file_name="VRCX_${{ needs.set_version.outputs.version }}.zip"
+                  file_name="VRCX-Jirai_${{ needs.set_version.outputs.version }}.zip"
                   cd build/Cef
                   7z a -tzip ${file_name} * -mx=7 -xr0!*.log
                   mv ${file_name} ../../${file_name}
@@ -378,4 +386,41 @@ jobs:
               uses: actions/upload-artifact@v5
               with:
                   name: VRCX-Zip
-                  path: 'VRCX_${{ needs.set_version.outputs.version }}.zip'
+                  path: 'VRCX-Jirai_${{ needs.set_version.outputs.version }}.zip'
+
+    publish_release:
+        runs-on: ubuntu-latest
+        if: |
+            (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/202')) ||
+            (github.event_name == 'workflow_dispatch' && github.event.inputs.release == 'true')
+        needs:
+            [
+                set_version,
+                build_dotnet_windows,
+                build_dotnet_linux,
+                build_dotnet_macos,
+                build_node,
+                build_macos,
+                create_setup
+            ]
+        steps:
+            - name: Download all artifacts
+              uses: actions/download-artifact@v6
+              with:
+                  path: artifacts
+
+            - name: Move artifacts for release
+              run: |
+                  mkdir release_assets
+                  # Grab all relevant artifacts from subdirectories
+                  find artifacts -type f \( -name "*.exe" -o -name "*.zip" -o -name "*.AppImage" -o -name "*.dmg" \) -exec mv {} release_assets/ \;
+                  ls -R release_assets
+
+            - name: Create Release
+              uses: softprops/action-gh-release@v2
+              with:
+                  tag_name: ${{ github.ref_name || needs.set_version.outputs.version }}
+                  files: release_assets/*
+                  generate_release_notes: true
+                  draft: false
+                  prerelease: false
