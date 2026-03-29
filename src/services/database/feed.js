@@ -140,6 +140,33 @@ const feed = {
         );
     },
 
+    /**
+     * Returns the most recent timestamp at which a friend arrived at the given
+     * location, as recorded in the GPS feed table.  Works for both real
+     * instances and "private" / "private:private" locations.
+     *
+     * @param {string} userId
+     * @param {string} location
+     * @returns {Promise<number|null>} Unix timestamp (ms) or null
+     */
+    async getLastGPSArrivalTimeForUser(userId, location) {
+        let arrivalTime = null;
+        await sqliteService.execute(
+            (row) => {
+                const ts = Date.parse(row[0]);
+                if (!isNaN(ts)) {
+                    arrivalTime = ts;
+                }
+            },
+            `SELECT created_at FROM ${dbVars.userPrefix}_feed_gps WHERE user_id = @userId AND location = @location ORDER BY id DESC LIMIT 1`,
+            {
+                '@userId': userId,
+                '@location': location
+            }
+        );
+        return arrivalTime;
+    },
+
     async searchFeedDatabase(
         search,
         filters,
