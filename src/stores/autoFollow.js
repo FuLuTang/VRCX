@@ -68,12 +68,8 @@ export const useAutoFollowStore = defineStore('AutoFollow', () => {
         }
     }
 
-    function showDialog() {
+    function openDialog() {
         dialogVisible.value = true;
-    }
-
-    function hideDialog() {
-        dialogVisible.value = false;
     }
 
     return {
@@ -83,7 +79,6 @@ export const useAutoFollowStore = defineStore('AutoFollow', () => {
         dialogVisible,
         startFollow,
         stopFollow,
-        showDialog,
-        hideDialog
+        openDialog
     };
 });

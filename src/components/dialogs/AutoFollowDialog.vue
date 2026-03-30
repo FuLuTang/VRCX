@@ -39,8 +39,12 @@
                 </div>
             </div>
 
-            <DialogFooter class="sm:justify-start">
-                <Button type="button" variant="secondary" @click="autoFollowStore.hideDialog()">
+            <DialogFooter class="sm:justify-between">
+                <Button type="button" variant="outline" :disabled="isRefreshing" @click="refreshFriendList">
+                    <RefreshCw class="h-4 w-4 mr-1.5" :class="{ 'animate-spin': isRefreshing }" />
+                    {{ t('dialog.refresh') }}
+                </Button>
+                <Button type="button" variant="secondary" @click="autoFollowStore.dialogVisible = false">
                     {{ t('dialog.close') }}
                 </Button>
             </DialogFooter>
@@ -49,42 +53,53 @@
 </template>
 
 <script setup>
-    import { computed } from 'vue';
-    import { useI18n } from 'vue-i18n';
-    import { storeToRefs } from 'pinia';
-    import { User } from 'lucide-vue-next';
+import { computed, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { storeToRefs } from 'pinia';
+import { RefreshCw, User } from 'lucide-vue-next';
 
-    import {
-        Dialog,
-        DialogContent,
-        DialogDescription,
-        DialogFooter,
-        DialogHeader,
-        DialogTitle
-    } from '../ui/dialog';
-    import { Button } from '../ui/button';
-    import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle
+} from '../ui/dialog';
+import { Button } from '../ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 
-    import { useFriendStore } from '../../stores/friend';
-    import { useAutoFollowStore } from '../../stores/autoFollow';
-    import { useUserDisplay } from '../../composables/useUserDisplay';
+import { useFriendStore } from '../../stores/friend';
+import { useAutoFollowStore } from '../../stores/autoFollow';
+import { useUserDisplay } from '../../composables/useUserDisplay';
 
-    const { t } = useI18n();
-    const friendStore = useFriendStore();
-    const autoFollowStore = useAutoFollowStore();
-    const { onlineFriends, allFavoriteOnlineFriends } = storeToRefs(friendStore);
-    const { userImage, userStatusClass } = useUserDisplay();
+const { t } = useI18n();
+const friendStore = useFriendStore();
+const autoFollowStore = useAutoFollowStore();
+const { sortedFriends } = storeToRefs(friendStore);
+const { userImage, userStatusClass } = useUserDisplay();
 
-    const availableFriends = computed(() => {
-        const allOnline = [...(allFavoriteOnlineFriends.value || []), ...(onlineFriends.value || [])];
-        return allOnline.filter(f => {
-            const status = f.ref?.status || f.status;
-            return ['join me', 'active', 'ask me'].includes(status);
-        });
+const isRefreshing = ref(false);
+
+const availableFriends = computed(() => {
+    return sortedFriends.value.filter(f => {
+        return f.state === 'online' &&
+            (f.ref?.status === 'join me' || f.ref?.status === 'active' || f.ref?.status === 'ask me');
     });
+});
 
-    function selectFriend(friend) {
-        autoFollowStore.startFollow(friend.ref || friend);
-        autoFollowStore.hideDialog();
+async function refreshFriendList() {
+    if (isRefreshing.value) return;
+    isRefreshing.value = true;
+    try {
+        await friendStore.refreshFriends();
+    } finally {
+        isRefreshing.value = false;
     }
+}
+
+function selectFriend(friend) {
+    autoFollowStore.startFollow(friend.ref || friend);
+    autoFollowStore.dialogVisible = false;
+}
 </script>

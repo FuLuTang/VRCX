@@ -255,7 +255,7 @@ function searchItems(
 function handleSearch(payload) {
     const { seq, query, currentUserId, language } = payload;
 
-    if (!query || query.length < 2) {
+    if (!query || query.length < 1) {
         self.postMessage({
             type: 'searchResult',
             payload: {

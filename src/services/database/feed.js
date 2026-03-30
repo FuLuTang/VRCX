@@ -65,6 +65,26 @@ const feed = {
         return result;
     },
 
+    async getLastStatusChangeForUser(userId) {
+        let result = null;
+        await sqliteService.execute(
+            (row) => {
+                result = {
+                    status: row[0],
+                    statusDescription: row[1],
+                    previousStatus: row[2],
+                    previousStatusDescription: row[3],
+                    createdAt: row[4]
+                };
+            },
+            `SELECT status, status_description, previous_status, previous_status_description, created_at FROM ${dbVars.userPrefix}_feed_status WHERE user_id = @userId ORDER BY id DESC LIMIT 1`,
+            {
+                '@userId': userId
+            }
+        );
+        return result;
+    },
+
     async getRecentBioChangesForUser(userId, limit = 50) {
         const results = [];
         await sqliteService.execute(
@@ -138,6 +158,28 @@ const feed = {
                 '@group_name': entry.groupName
             }
         );
+    },
+
+    /**
+     * Returns all status change records for a specific user, ordered by time.
+     * Used to build the status distribution chart in the user dialog.
+     *
+     * @param {string} userId
+     * @returns {Promise<Array<{createdAt: string, status: string}>>}
+     */
+    async getStatusHistoryForUser(userId) {
+        const results = [];
+        await sqliteService.execute(
+            (row) => {
+                results.push({
+                    createdAt: row[0],
+                    status: row[1]
+                });
+            },
+            `SELECT created_at, status FROM ${dbVars.userPrefix}_feed_status WHERE user_id = @userId ORDER BY created_at ASC`,
+            { '@userId': userId }
+        );
+        return results;
     },
 
     /**
