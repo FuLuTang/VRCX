@@ -210,10 +210,6 @@
                 <Navigation class="w-3.5 h-3.5" />
             </button>
         </div>
-        <AutoFollowDialog
-            v-if="isAutoFollowDialogOpen"
-            v-model:open="isAutoFollowDialogOpen"
-        />
     </div>
 </template>
 
@@ -259,7 +255,7 @@
     import { parseLocation } from '../../../shared/utils';
 
     import BackToTop from '../../../components/BackToTop.vue';
-    import AutoFollowDialog from '../../../components/dialogs/AutoFollowDialog.vue';
+
     import FriendItem from './FriendItem.vue';
     import Location from '../../../components/Location.vue';
     import configRepository from '../../../services/config';
@@ -271,13 +267,12 @@
     const { t } = useI18n();
 
     const autoFollowStore = useAutoFollowStore();
-    const isAutoFollowDialogOpen = ref(false);
 
     function toggleAutoFollow() {
         if (autoFollowStore.isActive) {
             autoFollowStore.stopFollow();
         } else {
-            isAutoFollowDialogOpen.value = true;
+            autoFollowStore.showDialog();
         }
     }
 
