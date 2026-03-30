@@ -48,6 +48,10 @@
                 <UserDialogActivityTab ref="activityTabRef" />
             </template>
 
+            <template #status-distribution>
+                <UserDialogStatusDistributionTab ref="statusDistributionTabRef" />
+            </template>
+
             <template #JSON>
                 <DialogJsonTab
                     :tree-data="treeData"
@@ -109,6 +113,7 @@
     import UserDialogGroupsTab from './UserDialogGroupsTab.vue';
     import UserDialogInfoTab from './UserDialogInfoTabJirai.vue';
     import UserDialogMutualFriendsTab from './UserDialogMutualFriendsTab.vue';
+    import UserDialogStatusDistributionTab from './UserDialogStatusDistributionTab.vue';
     import UserDialogWorldsTab from './UserDialogWorldsTab.vue';
     import UserSummaryHeader from './UserSummaryHeader.vue';
 
@@ -135,6 +140,14 @@
         // Insert Activity before JSON
         const jsonIdx = tabs.findIndex((tab) => tab.value === 'JSON');
         tabs.splice(jsonIdx, 0, { value: 'Activity', label: t('dialog.user.activity.header') });
+        // Insert Status Distribution before JSON (friends only)
+        if (userDialog.value.isFriend) {
+            const jsonIdx2 = tabs.findIndex((tab) => tab.value === 'JSON');
+            tabs.splice(jsonIdx2, 0, {
+                value: 'status-distribution',
+                label: t('dialog.user.status_distribution.header')
+            });
+        }
         return tabs;
     });
     const infoTabRef = ref(null);
@@ -144,6 +157,7 @@
     const worldsTabRef = ref(null);
     const avatarsTabRef = ref(null);
     const groupsTabRef = ref(null);
+    const statusDistributionTabRef = ref(null);
 
     const modalStore = useModalStore();
     const instanceStore = useInstanceStore();
@@ -363,6 +377,8 @@
             }
         } else if (tabName === 'Activity') {
             activityTabRef.value?.loadOnlineFrequency(userId);
+        } else if (tabName === 'status-distribution') {
+            statusDistributionTabRef.value?.loadStatusDistribution(userId);
         } else if (tabName === 'JSON') {
             refreshUserDialogTreeData();
         }

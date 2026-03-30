@@ -141,6 +141,28 @@ const feed = {
     },
 
     /**
+     * Returns all status change records for a specific user, ordered by time.
+     * Used to build the status distribution chart in the user dialog.
+     *
+     * @param {string} userId
+     * @returns {Promise<Array<{createdAt: string, status: string}>>}
+     */
+    async getStatusHistoryForUser(userId) {
+        const results = [];
+        await sqliteService.execute(
+            (row) => {
+                results.push({
+                    createdAt: row[0],
+                    status: row[1]
+                });
+            },
+            `SELECT created_at, status FROM ${dbVars.userPrefix}_feed_status WHERE user_id = @userId ORDER BY created_at ASC`,
+            { '@userId': userId }
+        );
+        return results;
+    },
+
+    /**
      * Returns the most recent timestamp at which a friend arrived at the given
      * location, as recorded in the GPS feed table.  Works for both real
      * instances and "private" / "private:private" locations.
