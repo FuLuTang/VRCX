@@ -255,7 +255,7 @@ function searchItems(
 function handleSearch(payload) {
     const { seq, query, currentUserId, language } = payload;
 
-    if (!query || query.length < 1) {
+    if (query === undefined) {
         self.postMessage({
             type: 'searchResult',
             payload: {
@@ -279,6 +279,67 @@ function handleSearch(payload) {
 
     // Pre-compute cleaned query once for all name searches
     const cleanQuery = removeWhitespace(query);
+
+    // Shortcut handling
+    if (query.startsWith('!')) {
+        const q = query.slice(1);
+        const cq = removeWhitespace(q);
+        const friends = !q && !cq ? Array.from(indexedFriends) : searchFriends(q, cq, comparer);
+        self.postMessage({
+            type: 'searchResult',
+            payload: {
+                seq,
+                friends,
+                ownAvatars: [],
+                favAvatars: [],
+                ownWorlds: [],
+                favWorlds: [],
+                ownGroups: [],
+                joinedGroups: []
+            }
+        });
+        return;
+    }
+
+    if (query.startsWith('@')) {
+        const q = query.slice(1);
+        const cq = removeWhitespace(q);
+        const worlds = !q && !cq ? Array.from(indexedWorlds) : searchItems(cq, indexedWorlds, 'world', comparer);
+        self.postMessage({
+            type: 'searchResult',
+            payload: {
+                seq,
+                friends: [],
+                ownAvatars: [],
+                favAvatars: [],
+                ownWorlds: worlds,
+                favWorlds: [],
+                ownGroups: [],
+                joinedGroups: []
+            }
+        });
+        return;
+    }
+
+    if (query.startsWith('#')) {
+        const q = query.slice(1);
+        const cq = removeWhitespace(q);
+        const users = !q && !cq ? Array.from(indexedGroups) : searchItems(cq, indexedGroups, 'group', comparer);
+        self.postMessage({
+            type: 'searchResult',
+            payload: {
+                seq,
+                friends: [],
+                ownAvatars: [],
+                favAvatars: [],
+                ownWorlds: [],
+                favWorlds: [],
+                ownGroups: users,
+                joinedGroups: []
+            }
+        });
+        return;
+    }
 
     const friends = searchFriends(query, cleanQuery, comparer);
     const ownAvatars = searchItems(

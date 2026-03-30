@@ -107,7 +107,7 @@ export const useQuickSearchStore = defineStore('QuickSearch', () => {
             indexUpdateTimer = null;
             if (!isOpen.value) return;
             sendIndexUpdate();
-            if (query.value && query.value.length >= 1) {
+            if (query.value !== undefined) {
                 dispatchSearch();
             }
         }, 200);
@@ -146,7 +146,7 @@ export const useQuickSearchStore = defineStore('QuickSearch', () => {
 
     function dispatchSearch() {
         const q = query.value;
-        if (!q || q.length < 1) {
+        if (q === undefined) {
             ++searchSeq;
             clearResults();
             return;
@@ -169,7 +169,7 @@ export const useQuickSearchStore = defineStore('QuickSearch', () => {
         filterRecentByQuery(q);
     });
     watch(currentUserId, () => {
-        if (query.value && query.value.length >= 1) {
+        if (query.value !== undefined) {
             dispatchSearch();
         }
     });
@@ -179,7 +179,7 @@ export const useQuickSearchStore = defineStore('QuickSearch', () => {
             startIndexWatchers();
             sendIndexUpdate();
             loadRecentItems();
-            if (query.value && query.value.length >= 1) {
+            if (query.value !== undefined) {
                 dispatchSearch();
             }
             return;
