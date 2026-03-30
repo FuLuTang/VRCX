@@ -47,7 +47,11 @@
                 </div>
             </div>
 
-            <DialogFooter class="sm:justify-start">
+            <DialogFooter class="sm:justify-between">
+                <Button type="button" variant="outline" :disabled="isRefreshing" @click="refreshFriendList">
+                    <RefreshCw class="h-4 w-4 mr-1.5" :class="{ 'animate-spin': isRefreshing }" />
+                    {{ t('dialog.refresh') }}
+                </Button>
                 <Button type="button" variant="secondary" @click="$emit('update:open', false)">
                     {{ t('dialog.close') }}
                 </Button>
@@ -57,10 +61,10 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { storeToRefs } from 'pinia';
-import { User } from 'lucide-vue-next';
+import { RefreshCw, User } from 'lucide-vue-next';
 
 import {
     Dialog,
@@ -91,14 +95,27 @@ const emit = defineEmits(['update:open']);
 const { t } = useI18n();
 const friendStore = useFriendStore();
 const autoFollowStore = useAutoFollowStore();
-const { onlineFriends } = storeToRefs(friendStore);
+const { sortedFriends } = storeToRefs(friendStore);
 const { userImage, userStatusClass } = useUserDisplay();
 
+const isRefreshing = ref(false);
+
 const availableFriends = computed(() => {
-    return onlineFriends.value.filter(f => {
-        return f.ref?.status === 'join me' || f.ref?.status === 'active';
+    return sortedFriends.value.filter(f => {
+        return f.state === 'online' &&
+            (f.ref?.status === 'join me' || f.ref?.status === 'active');
     });
 });
+
+async function refreshFriendList() {
+    if (isRefreshing.value) return;
+    isRefreshing.value = true;
+    try {
+        await friendStore.refreshFriends();
+    } finally {
+        isRefreshing.value = false;
+    }
+}
 
 function selectFriend(friend) {
     autoFollowStore.startFollow(friend.ref);

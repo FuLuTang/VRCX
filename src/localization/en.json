@@ -1321,6 +1321,8 @@
         }
     },
     "dialog": {
+        "close": "Close",
+        "refresh": "Refresh",
         "alertdialog": {
             "ok": "OK",
             "cancel": "Cancel",

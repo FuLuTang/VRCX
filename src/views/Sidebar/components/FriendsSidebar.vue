@@ -201,14 +201,10 @@
         <BackToTop :virtualizer="virtualizer" :target="scrollViewportRef" :tooltip="false" />
 
         <div class="absolute bottom-5 right-[70px] z-10">
-            <button
-                class="px-3 py-1.5 rounded-full shadow-lg text-white font-medium text-sm transition-colors inline-flex items-center gap-1.5"
-                :class="autoFollowStore.isActive ? 'bg-orange-500 hover:bg-orange-600' : 'bg-blue-500 hover:bg-blue-600'"
-                @click="toggleAutoFollow"
-            >
+            <LiquidGlassButton :active="autoFollowStore.isActive" @click="toggleAutoFollow">
                 {{ autoFollowStore.isActive ? '跟随中 ■' : '自动跟随' }}
                 <Navigation class="w-3.5 h-3.5" />
-            </button>
+            </LiquidGlassButton>
         </div>
         <AutoFollowDialog
             v-if="isAutoFollowDialogOpen"
@@ -260,6 +256,7 @@
 
     import BackToTop from '../../../components/BackToTop.vue';
     import AutoFollowDialog from '../../../components/dialogs/AutoFollowDialog.vue';
+    import LiquidGlassButton from '../../../components/ui/liquid-glass-button/LiquidGlassButton.vue';
     import FriendItem from './FriendItem.vue';
     import Location from '../../../components/Location.vue';
     import configRepository from '../../../services/config';
@@ -277,7 +274,11 @@
         if (autoFollowStore.isActive) {
             autoFollowStore.stopFollow();
         } else {
-            isAutoFollowDialogOpen.value = true;
+            // Force re-mount each time so the friend list is always fresh
+            isAutoFollowDialogOpen.value = false;
+            nextTick(() => {
+                isAutoFollowDialogOpen.value = true;
+            });
         }
     }
 
@@ -897,3 +898,5 @@
             });
     }
 </script>
+
+
