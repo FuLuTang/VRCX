@@ -47,19 +47,22 @@ export const useQuickSearchStore = defineStore('QuickSearch', () => {
     const ownGroupResults = ref([]);
     const joinedGroupResults = ref([]);
 
-    // Recently met / recently joined (shown when query is empty)
+    // Recently met / recently joined (source data, loaded when dialog opens)
     const recentlyMetUsers = ref([]);
     const recentlyJoinedLocations = ref([]);
+
+    // Filtered recent results when query is active
+    const recentlyMetResults = ref([]);
+    const recentBeenResults = ref([]);
 
     const hasResults = computed(
         () =>
             friendResults.value.length > 0 ||
             ownAvatarResults.value.length > 0 ||
             favoriteAvatarResults.value.length > 0 ||
-            ownWorldResults.value.length > 0 ||
             favoriteWorldResults.value.length > 0 ||
-            ownGroupResults.value.length > 0 ||
-            joinedGroupResults.value.length > 0
+            recentlyMetResults.value.length > 0 ||
+            recentBeenResults.value.length > 0
     );
 
     const currentUserId = computed(() => userStore.currentUser?.id);
@@ -76,6 +79,25 @@ export const useQuickSearchStore = defineStore('QuickSearch', () => {
             (u) => !friendStore.friends.has(u.userId)
         );
         recentlyJoinedLocations.value = locations;
+        // Re-filter if there's already an active query
+        if (query.value) {
+            filterRecentByQuery(query.value);
+        }
+    }
+
+    function filterRecentByQuery(q) {
+        if (!q) {
+            recentlyMetResults.value = [];
+            recentBeenResults.value = [];
+            return;
+        }
+        const lowerQ = q.toLowerCase();
+        recentlyMetResults.value = recentlyMetUsers.value.filter((u) =>
+            u.displayName?.toLowerCase().includes(lowerQ)
+        );
+        recentBeenResults.value = recentlyJoinedLocations.value.filter((l) =>
+            l.worldName?.toLowerCase().includes(lowerQ)
+        );
     }
 
     // Send index update to worker when data changes
@@ -86,7 +108,7 @@ export const useQuickSearchStore = defineStore('QuickSearch', () => {
             indexUpdateTimer = null;
             if (!isOpen.value) return;
             sendIndexUpdate();
-            if (query.value && query.value.length >= 2) {
+            if (query.value && query.value.length >= 1) {
                 dispatchSearch();
             }
         }, 200);
@@ -125,7 +147,7 @@ export const useQuickSearchStore = defineStore('QuickSearch', () => {
 
     function dispatchSearch() {
         const q = query.value;
-        if (!q || q.length < 2) {
+        if (!q || q.length < 1) {
             ++searchSeq;
             clearResults();
             return;
@@ -143,9 +165,12 @@ export const useQuickSearchStore = defineStore('QuickSearch', () => {
         });
     }
 
-    watch(query, dispatchSearch);
+    watch(query, (q) => {
+        dispatchSearch();
+        filterRecentByQuery(q);
+    });
     watch(currentUserId, () => {
-        if (query.value && query.value.length >= 2) {
+        if (query.value && query.value.length >= 1) {
             dispatchSearch();
         }
     });
@@ -155,7 +180,7 @@ export const useQuickSearchStore = defineStore('QuickSearch', () => {
             startIndexWatchers();
             sendIndexUpdate();
             loadRecentItems();
-            if (query.value && query.value.length >= 2) {
+            if (query.value && query.value.length >= 1) {
                 dispatchSearch();
             }
             return;
@@ -197,6 +222,8 @@ export const useQuickSearchStore = defineStore('QuickSearch', () => {
         joinedGroupResults.value = [];
         recentlyMetUsers.value = [];
         recentlyJoinedLocations.value = [];
+        recentlyMetResults.value = [];
+        recentBeenResults.value = [];
     }
 
     function open() {
@@ -256,6 +283,8 @@ export const useQuickSearchStore = defineStore('QuickSearch', () => {
         joinedGroupResults,
         recentlyMetUsers,
         recentlyJoinedLocations,
+        recentlyMetResults,
+        recentBeenResults,
         hasResults,
 
         open,

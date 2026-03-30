@@ -287,7 +287,11 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
         const latestVersionName = VRCXUpdateDialog.value.release;
         if (latestVersionName) {
             latestAppVersion.value = latestVersionName;
-            if (latestVersionName !== currentVersion.value) {
+            // Strip "VRCX-Jirai " or "VRCX-Jirai Nightly " prefix for comparison
+            const currentVersionStripped = currentVersion.value
+                .replace(/^VRCX-Jirai(?:\s+Nightly)?\s+/, '')
+                .trim();
+            if (latestVersionName !== currentVersionStripped) {
                 pendingVRCXUpdate.value = true;
             }
         }
@@ -350,7 +354,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
             }
         }
         D.releases = releases;
-        D.release = json[0].name;
+        D.release = releases.length > 0 ? releases[0].name : (json.length > 0 ? json[0].name : '');
         VRCXUpdateDialog.value.updatePendingIsLatest = false;
         if (D.release === pendingVRCXInstall.value) {
             // update already downloaded and latest version

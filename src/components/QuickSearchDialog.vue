@@ -18,12 +18,9 @@
         friendResults,
         ownAvatarResults,
         favoriteAvatarResults,
-        ownWorldResults,
         favoriteWorldResults,
-        ownGroupResults,
-        joinedGroupResults,
-        recentlyMetUsers,
-        recentlyJoinedLocations,
+        recentlyMetResults,
+        recentBeenResults,
         hasResults
     } = storeToRefs(quickSearchStore);
     const { selectResult } = quickSearchStore;
@@ -49,63 +46,31 @@
                 <QuickSearchSync />
                 <CommandInput :placeholder="t('side_panel.search_placeholder')" />
                 <CommandList class="max-h-[min(400px,50vh)] overflow-y-auto overflow-x-hidden">
-                    <template v-if="!query || query.length < 2">
+                    <template v-if="!query">
                         <CommandGroup :heading="t('side_panel.search_categories')">
                             <CommandItem :value="'hint-friends'" disabled class="gap-3 opacity-70">
                                 <Users class="size-4" />
                                 <span class="flex-1">{{ t('side_panel.search_friends') }}</span>
-                                <span class="text-xs text-muted-foreground">{{
-                                    t('side_panel.search_scope_all')
-                                }}</span>
                             </CommandItem>
-                            <CommandItem :value="'hint-avatars'" disabled class="gap-3 opacity-70">
-                                <Image class="size-4" />
-                                <span class="flex-1">{{ t('side_panel.search_avatars') }}</span>
-                                <span class="text-xs text-muted-foreground">{{
-                                    t('side_panel.search_scope_avatars')
-                                }}</span>
+                            <CommandItem :value="'hint-recently-met'" disabled class="gap-3 opacity-70">
+                                <Clock class="size-4" />
+                                <span class="flex-1">{{ t('side_panel.search_recently_met') }}</span>
                             </CommandItem>
-                            <CommandItem :value="'hint-worlds'" disabled class="gap-3 opacity-70">
+                            <CommandItem :value="'hint-fav-worlds'" disabled class="gap-3 opacity-70">
                                 <Globe class="size-4" />
-                                <span class="flex-1">{{ t('side_panel.search_worlds') }}</span>
-                                <span class="text-xs text-muted-foreground">{{
-                                    t('side_panel.search_scope_worlds')
-                                }}</span>
+                                <span class="flex-1">{{ t('side_panel.search_fav_worlds') }}</span>
                             </CommandItem>
-                            <CommandItem :value="'hint-groups'" disabled class="gap-3 opacity-70">
-                                <Users class="size-4" />
-                                <span class="flex-1">{{ t('side_panel.search_groups') }}</span>
-                                <span class="text-xs text-muted-foreground">{{
-                                    t('side_panel.search_scope_joined')
-                                }}</span>
+                            <CommandItem :value="'hint-recently-been'" disabled class="gap-3 opacity-70">
+                                <History class="size-4" />
+                                <span class="flex-1">{{ t('side_panel.search_recently_joined') }}</span>
                             </CommandItem>
-                        </CommandGroup>
-
-                        <CommandGroup
-                            v-if="recentlyMetUsers.length > 0"
-                            :heading="t('side_panel.search_recently_met')">
-                            <CommandItem
-                                v-for="user in recentlyMetUsers"
-                                :key="user.userId"
-                                :value="'recently-met-' + user.userId"
-                                class="gap-3"
-                                @select="handleSelect({ id: user.userId, type: 'recentlyMet' })">
-                                <Clock class="size-4 text-muted-foreground" />
-                                <span class="truncate">{{ user.displayName }}</span>
+                            <CommandItem :value="'hint-own-avatars'" disabled class="gap-3 opacity-70">
+                                <Image class="size-4" />
+                                <span class="flex-1">{{ t('side_panel.search_own_avatars') }}</span>
                             </CommandItem>
-                        </CommandGroup>
-
-                        <CommandGroup
-                            v-if="recentlyJoinedLocations.length > 0"
-                            :heading="t('side_panel.search_recently_joined')">
-                            <CommandItem
-                                v-for="loc in recentlyJoinedLocations"
-                                :key="loc.worldId"
-                                :value="'recently-joined-' + loc.worldId"
-                                class="gap-3"
-                                @select="handleSelect({ id: loc.worldId, type: 'recentlyJoined' })">
-                                <History class="size-4 text-muted-foreground" />
-                                <span class="truncate">{{ loc.worldName }}</span>
+                            <CommandItem :value="'hint-fav-avatars'" disabled class="gap-3 opacity-70">
+                                <Image class="size-4" />
+                                <span class="flex-1">{{ t('side_panel.search_fav_avatars') }}</span>
                             </CommandItem>
                         </CommandGroup>
                     </template>
@@ -146,6 +111,53 @@
                             </CommandItem>
                         </CommandGroup>
 
+                        <CommandGroup
+                            v-if="recentlyMetResults.length > 0"
+                            :heading="t('side_panel.search_recently_met')">
+                            <CommandItem
+                                v-for="user in recentlyMetResults"
+                                :key="user.userId"
+                                :value="'recently-met-' + user.userId"
+                                class="gap-3"
+                                @select="handleSelect({ id: user.userId, type: 'recentlyMet' })">
+                                <Clock class="size-4 text-muted-foreground" />
+                                <span class="truncate">{{ user.displayName }}</span>
+                            </CommandItem>
+                        </CommandGroup>
+
+                        <CommandGroup
+                            v-if="favoriteWorldResults.length > 0"
+                            :heading="t('side_panel.search_fav_worlds')">
+                            <CommandItem
+                                v-for="item in favoriteWorldResults"
+                                :key="item.id"
+                                :value="item.name + ' fav ' + item.id"
+                                class="gap-3"
+                                @select="handleSelect(item)">
+                                <img
+                                    v-if="item.imageUrl"
+                                    :src="item.imageUrl"
+                                    class="size-6 rounded object-cover"
+                                    loading="lazy" />
+                                <Globe v-else class="size-4" />
+                                <span class="truncate">{{ item.name }}</span>
+                            </CommandItem>
+                        </CommandGroup>
+
+                        <CommandGroup
+                            v-if="recentBeenResults.length > 0"
+                            :heading="t('side_panel.search_recently_joined')">
+                            <CommandItem
+                                v-for="loc in recentBeenResults"
+                                :key="loc.worldId"
+                                :value="'recently-joined-' + loc.worldId"
+                                class="gap-3"
+                                @select="handleSelect({ id: loc.worldId, type: 'recentlyJoined' })">
+                                <History class="size-4 text-muted-foreground" />
+                                <span class="truncate">{{ loc.worldName }}</span>
+                            </CommandItem>
+                        </CommandGroup>
+
                         <CommandGroup v-if="ownAvatarResults.length > 0" :heading="t('side_panel.search_own_avatars')">
                             <CommandItem
                                 v-for="item in ownAvatarResults"
@@ -178,78 +190,6 @@
                                     class="size-6 rounded object-cover"
                                     loading="lazy" />
                                 <Image v-else class="size-4" />
-                                <span class="truncate">{{ item.name }}</span>
-                            </CommandItem>
-                        </CommandGroup>
-
-                        <CommandGroup v-if="ownWorldResults.length > 0" :heading="t('side_panel.search_own_worlds')">
-                            <CommandItem
-                                v-for="item in ownWorldResults"
-                                :key="item.id"
-                                :value="item.name + ' own ' + item.id"
-                                class="gap-3"
-                                @select="handleSelect(item)">
-                                <img
-                                    v-if="item.imageUrl"
-                                    :src="item.imageUrl"
-                                    class="size-6 rounded object-cover"
-                                    loading="lazy" />
-                                <Globe v-else class="size-4" />
-                                <span class="truncate">{{ item.name }}</span>
-                            </CommandItem>
-                        </CommandGroup>
-
-                        <CommandGroup
-                            v-if="favoriteWorldResults.length > 0"
-                            :heading="t('side_panel.search_fav_worlds')">
-                            <CommandItem
-                                v-for="item in favoriteWorldResults"
-                                :key="item.id"
-                                :value="item.name + ' fav ' + item.id"
-                                class="gap-3"
-                                @select="handleSelect(item)">
-                                <img
-                                    v-if="item.imageUrl"
-                                    :src="item.imageUrl"
-                                    class="size-6 rounded object-cover"
-                                    loading="lazy" />
-                                <Globe v-else class="size-4" />
-                                <span class="truncate">{{ item.name }}</span>
-                            </CommandItem>
-                        </CommandGroup>
-
-                        <CommandGroup v-if="ownGroupResults.length > 0" :heading="t('side_panel.search_own_groups')">
-                            <CommandItem
-                                v-for="item in ownGroupResults"
-                                :key="item.id"
-                                :value="item.name + ' own ' + item.id"
-                                class="gap-3"
-                                @select="handleSelect(item)">
-                                <img
-                                    v-if="item.imageUrl"
-                                    :src="item.imageUrl"
-                                    class="size-6 rounded object-cover"
-                                    loading="lazy" />
-                                <Users v-else class="size-4" />
-                                <span class="truncate">{{ item.name }}</span>
-                            </CommandItem>
-                        </CommandGroup>
-
-                        <CommandGroup
-                            v-if="joinedGroupResults.length > 0"
-                            :heading="t('side_panel.search_joined_groups')">
-                            <CommandItem
-                                v-for="item in joinedGroupResults"
-                                :key="item.id"
-                                :value="item.name + ' joined ' + item.id"
-                                class="gap-3"
-                                @select="handleSelect(item)">
-                                <img
-                                    v-if="item.imageUrl"
-                                    :src="item.imageUrl"
-                                    class="size-6 rounded object-cover"
-                                    loading="lazy" />
-                                <Users v-else class="size-4" />
                                 <span class="truncate">{{ item.name }}</span>
                             </CommandItem>
                         </CommandGroup>
