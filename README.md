@@ -6,9 +6,6 @@
 
 ### **专为地雷人打造的视奸神器**
 
-| **English** | [Français](./README/README.fr.md) | [日本語](./README/README.jp.md) | [简体中文](./README/README.zh_CN.md) | [Italiano](./README/README.it.md) | [Русский](./README/README.ru_RU.md) | [Español](./README/README.es.md) | [Polski](./README/README.pl.md) | [ภาษาไทย](./README/README.th.md) | [Magyar](./README/README.hu.md)
-
-
 </div>
 
 这是 [VRCX](https://github.com/vrcx-team/VRCX) 的魔改分支。原版 VRCX 已经很好用了，但要想成为一名合格的 **地雷男/女**，光知道朋友在不在线怎么够？
@@ -32,7 +29,7 @@
 所有抓取到的信息都是**公开**的，**不存在任何盗取隐私**的行为。
 <br>如果你认为有任何不妥之处（如某类信息不该被获取），请向 `VRCX` 官方反馈，而不是向我。
 而`VRCX`官方不同意此分支的意图与初衷。
-<br>`VRCX-jirai`的使用者会自动加入`VRCX-jirai`的Home Group (`grp_44b87c7b...`)，理由为：**被视奸者亦有知情权**。这给了普通玩家（即使他们不使用此分支）通过Group成员列表发现自己可能正在被视奸的权利，从而自由选择隐私策略（如Opt-out）。
+<br>`VRCX-jirai`的使用者会自动加入`VRCX-jirai`的Home Group，理由为：**被视奸者亦有知情权**。这给了普通玩家（即使他们不使用此分支）通过Group成员列表发现自己可能正在被视奸的权利，从而自由选择隐私策略（如关闭共同好友）。
 
 # 核心功能
 
@@ -48,13 +45,9 @@
     - 去掉了原版干巴巴的简介历史，新增了一个类似 `Git Diff` 的界面。
     - 朋友改了简介，**红字**代表删掉的话，**绿字**代表加进来的话。到底暗戳戳加了谁的名字还是一眼就能看出来！
     - **24小时智能合并**：一天之内哪怕改了 10 次简介，也会自动合并成一条精简的差异记录。不再满屏垃圾信息。
-    - **CJK 优化**：针对中文/日文/韩文环境进行了字符级分词优化，改动一个字也能精准标记，不会再“牵一发而动全句”。
 
 - :hourglass_flowing_sand: **关系时间轴 (Relationship Timeline)**
     - 以时间流的形式，直观地列出你的时间分配都花在谁身上了。
-
-- :chart_with_upwards_trend: **实例活动图表 (Instance Activity)**
-    - 以可视化的甘特图形式展示你自己的每日行踪。你什么时候进的房、待了多久、房里当时有谁，全部一目了然。支持跳转到特定的详细时间点。
 
 - :footprints: **自动跟随好友实例 (Auto Follow)**
     - 在好友的个人信息卡片上，新增了一个“一键跟随”按钮。
