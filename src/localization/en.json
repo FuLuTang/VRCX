@@ -1562,6 +1562,18 @@
                 "header": "Edit Note And Memo",
                 "cancel": "Cancel",
                 "confirm": "Confirm"
+            },
+            "status_distribution": {
+                "header": "Status Distribution",
+                "refresh_hint": "Refresh status distribution data",
+                "loading": "Loading status data...",
+                "days_per_unit": "days/unit",
+                "status": {
+                    "active": "Online",
+                    "join_me": "Join Me",
+                    "ask_me": "Ask Me",
+                    "busy": "Do Not Disturb"
+                }
             }
         },
         "world": {

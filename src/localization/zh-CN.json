@@ -1205,6 +1205,18 @@
                 "header": "编辑线上备注和本地备注",
                 "cancel": "取消",
                 "confirm": "确定"
+            },
+            "status_distribution": {
+                "header": "灯色分布",
+                "refresh_hint": "刷新灯色分布数据",
+                "loading": "正在加载状态数据…",
+                "days_per_unit": "天/格",
+                "status": {
+                    "active": "在线",
+                    "join_me": "加入我",
+                    "ask_me": "询问我",
+                    "busy": "请勿打扰"
+                }
             }
         },
         "world": {
