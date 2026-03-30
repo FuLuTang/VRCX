@@ -247,6 +247,44 @@
                             </div>
                         </TooltipWrapper>
 
+                        <TooltipWrapper
+                            v-if="visibility.infoFetch"
+                            :content="infoFetchTooltip"
+                            side="top">
+                            <div
+                                class="flex items-center gap-1 px-2 h-[22px] whitespace-nowrap border-r border-border cursor-pointer hover:bg-accent"
+                                @click="runSilentInfoFetch">
+                                <!-- Running: yellow spinner -->
+                                <svg
+                                    v-if="infoFetchState.status === 'running'"
+                                    class="size-3 shrink-0 animate-spin"
+                                    viewBox="0 0 16 16"
+                                    fill="none">
+                                    <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="2" class="text-muted-foreground/30" />
+                                    <path d="M14 8a6 6 0 0 0-6-6" stroke="#eab308" stroke-width="2" stroke-linecap="round" />
+                                </svg>
+                                <!-- Done: green check -->
+                                <svg
+                                    v-else-if="infoFetchState.status === 'done'"
+                                    class="size-3 shrink-0 text-green-500"
+                                    viewBox="0 0 16 16"
+                                    fill="none">
+                                    <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" />
+                                    <path d="M5 8.5l2 2 4-4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                                <!-- Idle: grey circle -->
+                                <span
+                                    v-else
+                                    class="inline-block size-2 rounded-full shrink-0 bg-status-offline-alt" />
+                                <span class="text-[10px] text-foreground">同步</span>
+                                <span
+                                    v-if="infoFetchState.status === 'running'"
+                                    class="text-[10px] text-foreground">
+                                    {{ infoFetchState.done }}/{{ infoFetchState.total }}
+                                </span>
+                            </div>
+                        </TooltipWrapper>
+
                         <TooltipWrapper v-if="visibility.uptime" :content="t('status_bar.app_uptime')" side="top">
                             <div class="flex items-center gap-1 px-2 h-[22px] whitespace-nowrap border-r border-border">
                                 <span class="text-[10px] text-foreground">{{ t('status_bar.app_uptime_short') }}</span>
@@ -289,6 +327,12 @@
                     @select.prevent
                     @update:model-value="toggleVisibility('ws')">
                     WebSocket
+                </ContextMenuCheckboxItem>
+                <ContextMenuCheckboxItem
+                    :model-value="visibility.infoFetch"
+                    @select.prevent
+                    @update:model-value="toggleVisibility('infoFetch')">
+                    信息同步
                 </ContextMenuCheckboxItem>
                 <ContextMenuCheckboxItem
                     :model-value="visibility.uptime"
@@ -366,6 +410,7 @@
     import { TooltipWrapper } from '@/components/ui/tooltip';
     import { useI18n } from 'vue-i18n';
     import { wsState } from '@/services/websocket';
+    import { infoFetchState, runSilentInfoFetch } from '@/coordinators/infoFetchCoordinator';
 
     import dayjs from 'dayjs';
     import timezone from 'dayjs/plugin/timezone';
@@ -547,6 +592,16 @@
     const wsTooltip = computed(() => {
         const state = wsState.connected ? t('status_bar.ws_connected') : t('status_bar.ws_disconnected');
         return `WebSocket: ${state}`;
+    });
+
+    const infoFetchTooltip = computed(() => {
+        if (infoFetchState.status === 'running') {
+            return `信息同步中 ${infoFetchState.done}/${infoFetchState.total}（Bio +${infoFetchState.bioUpdated}，Status +${infoFetchState.statusUpdated}）`;
+        }
+        if (infoFetchState.status === 'done') {
+            return `同步完成：Bio 更新 ${infoFetchState.bioUpdated} 条，Status 更新 ${infoFetchState.statusUpdated} 条（点击重新同步）`;
+        }
+        return '信息同步（点击开始）';
     });
 
     const appUptimeText = computed(() => {

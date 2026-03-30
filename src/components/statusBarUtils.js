@@ -8,6 +8,7 @@ export const defaultVisibility = {
     steamvr: true,
     proxy: true,
     ws: true,
+    infoFetch: true,
     uptime: true,
     clocks: true,
     zoom: true,
