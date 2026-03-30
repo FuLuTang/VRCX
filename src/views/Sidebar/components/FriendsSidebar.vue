@@ -202,12 +202,13 @@
 
         <div class="absolute bottom-5 right-[70px] z-10">
             <button
-                class="px-3 py-1.5 rounded-full shadow-lg text-white font-medium text-sm transition-colors inline-flex items-center gap-1.5"
-                :class="autoFollowStore.isActive ? 'bg-orange-500 hover:bg-orange-600' : 'bg-blue-500 hover:bg-blue-600'"
+                class="auto-follow-btn"
+                :class="autoFollowStore.isActive ? 'is-active' : ''"
                 @click="toggleAutoFollow"
             >
+                <span class="auto-follow-btn__sheen" aria-hidden="true" />
                 {{ autoFollowStore.isActive ? '跟随中 ■' : '自动跟随' }}
-                <Navigation class="w-3.5 h-3.5" />
+                <Navigation class="w-3.5 h-3.5 relative z-10" />
             </button>
         </div>
         <AutoFollowDialog
@@ -901,3 +902,89 @@
             });
     }
 </script>
+
+<style scoped>
+/* ── Liquid Glass Button ──────────────────────────────────────── */
+.auto-follow-btn {
+    /* layout */
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.375rem 0.875rem;
+    border-radius: 9999px;
+    overflow: hidden;
+
+    /* glass base – blue tint */
+    background: rgba(59, 130, 246, 0.45);
+    backdrop-filter: blur(10px) saturate(140%);
+    -webkit-backdrop-filter: blur(10px) saturate(140%);
+
+    /* glass border */
+    border: 1px solid rgba(255, 255, 255, 0.28);
+
+    /* depth shadow + inner top-edge glow */
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.35),
+        0 4px 14px rgba(0, 0, 0, 0.18);
+
+    /* text */
+    color: #fff;
+    font-size: 0.8125rem; /* ~13px */
+    font-weight: 600;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+
+    /* transition: only GPU-friendly props */
+    transition:
+        background 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.15s ease;
+
+    cursor: pointer;
+}
+
+/* sheen overlay (top-half highlight) */
+.auto-follow-btn__sheen {
+    position: absolute;
+    inset: 0 0 50% 0;
+    background: linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0.22) 0%,
+        rgba(255, 255, 255, 0.04) 100%
+    );
+    border-radius: 9999px 9999px 0 0;
+    pointer-events: none;
+}
+
+/* active (following) – orange tint */
+.auto-follow-btn.is-active {
+    background: rgba(249, 115, 22, 0.50);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.35),
+        0 4px 14px rgba(249, 115, 22, 0.30);
+}
+
+/* hover */
+.auto-follow-btn:hover {
+    background: rgba(59, 130, 246, 0.60);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.40),
+        0 6px 18px rgba(0, 0, 0, 0.22);
+    transform: translateY(-1px);
+}
+
+.auto-follow-btn.is-active:hover {
+    background: rgba(249, 115, 22, 0.65);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.40),
+        0 6px 18px rgba(249, 115, 22, 0.35);
+}
+
+/* active press */
+.auto-follow-btn:active {
+    transform: translateY(0);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.25),
+        0 2px 8px rgba(0, 0, 0, 0.15);
+}
+</style>
