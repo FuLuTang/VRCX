@@ -277,7 +277,11 @@
         if (autoFollowStore.isActive) {
             autoFollowStore.stopFollow();
         } else {
-            isAutoFollowDialogOpen.value = true;
+            // Force re-mount each time so the friend list is always fresh
+            isAutoFollowDialogOpen.value = false;
+            nextTick(() => {
+                isAutoFollowDialogOpen.value = true;
+            });
         }
     }
 
