@@ -73,6 +73,7 @@
         "electron": "^40.8.5",
         "electron-builder": "^26.8.1",
         "embla-carousel-vue": "^8.6.0",
+        "encoding": "^0.1.13",
         "eslint": "^9.39.4",
         "eslint-plugin-jsdoc": "^62.8.1",
         "eslint-plugin-oxlint": "^1.57.0",
