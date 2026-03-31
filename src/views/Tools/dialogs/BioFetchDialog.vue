@@ -197,18 +197,22 @@
                 } else if (type === 'status') {
                     const currentStatus = ref.status || '';
                     const currentStatusDesc = ref.statusDescription || '';
-                    const last = await database.getLastStatusChangeForUser(userId);
-                    if (!last || last.status !== currentStatus || last.statusDescription !== currentStatusDesc) {
-                        database.addStatusToDatabase({
-                            created_at: new Date().toJSON(),
-                            userId,
-                            displayName,
-                            status: currentStatus,
-                            statusDescription: currentStatusDesc,
-                            previousStatus: last ? last.status : '',
-                            previousStatusDescription: last ? last.statusDescription : ''
-                        });
-                        statusUpdatedCount.value++;
+                    
+                    const validStatuses = ['join me', 'active', 'ask me', 'busy'];
+                    if (validStatuses.includes(currentStatus)) {
+                        const last = await database.getLastStatusChangeForUser(userId);
+                        if (!last || last.status !== currentStatus) {
+                            database.addStatusToDatabase({
+                                created_at: new Date().toJSON(),
+                                userId,
+                                displayName,
+                                status: currentStatus,
+                                statusDescription: currentStatusDesc,
+                                previousStatus: last ? last.status : '',
+                                previousStatusDescription: last ? last.statusDescription : ''
+                            });
+                            statusUpdatedCount.value++;
+                        }
                     }
                     statusDone.value++;
                 }

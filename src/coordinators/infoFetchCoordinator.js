@@ -80,22 +80,24 @@ export async function runSilentInfoFetch() {
             // Status
             const currentStatus = ref.status || '';
             const currentStatusDesc = ref.statusDescription || '';
-            const lastStatus = await database.getLastStatusChangeForUser(userId);
-            if (
-                !lastStatus ||
-                lastStatus.status !== currentStatus ||
-                lastStatus.statusDescription !== currentStatusDesc
-            ) {
-                database.addStatusToDatabase({
-                    created_at: new Date().toJSON(),
-                    userId,
-                    displayName,
-                    status: currentStatus,
-                    statusDescription: currentStatusDesc,
-                    previousStatus: lastStatus ? lastStatus.status : '',
-                    previousStatusDescription: lastStatus ? lastStatus.statusDescription : ''
-                });
-                infoFetchState.statusUpdated++;
+            
+            const validStatuses = ['join me', 'active', 'ask me', 'busy'];
+            if (validStatuses.includes(currentStatus)) {
+                const lastStatus = await database.getLastStatusChangeForUser(userId);
+                
+                // 仅当状态发生改变时才记录，不记录仅签名（statusDescription）的改变
+                if (!lastStatus || lastStatus.status !== currentStatus) {
+                    database.addStatusToDatabase({
+                        created_at: new Date().toJSON(),
+                        userId,
+                        displayName,
+                        status: currentStatus,
+                        statusDescription: currentStatusDesc,
+                        previousStatus: lastStatus ? lastStatus.status : '',
+                        previousStatusDescription: lastStatus ? lastStatus.statusDescription : ''
+                    });
+                    infoFetchState.statusUpdated++;
+                }
             }
         } catch {
             // ignore
