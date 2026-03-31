@@ -42,7 +42,7 @@ export async function runHandleUserUpdateFlow(
     let newLocation;
     let previousLocation;
     const friend = friendStore.friends.get(ref.id);
-    if (typeof friend === 'undefined') {
+    if (typeof friend === 'undefined' && ref.id !== userStore.currentUser.id) {
         return;
     }
     if (props.location) {

@@ -93,7 +93,8 @@
 
     // ─── State ────────────────────────────────────────────────────────────────────
     const isLoading = ref(false);
-    const rawRows = ref([]);
+    const rawStatusRows = ref([]);
+    const rawOnlineRows = ref([]);
     const chartDomRef = ref(null);
     let echartsInstance = null;
     let resizeObserver = null;
@@ -107,7 +108,7 @@
     );
     const DEFAULT_VISIBLE_BUCKETS = 10;
 
-    const hasData = computed(() => rawRows.value.length > 0);
+    const hasData = computed(() => rawStatusRows.value.length > 0);
 
     // ─── Bucket helpers ───────────────────────────────────────────────────────────
     function daysSinceEpoch(isoStr) {
@@ -123,27 +124,92 @@
         return `${start}~${end}`;
     }
 
-    // ─── Build chart data from rawRows ────────────────────────────────────────────
+    // ─── Build chart data from rawStatusRows & rawOnlineRows ──────────────────────
     function buildChartData() {
-        const rows = rawRows.value;
-        if (!rows.length) return null;
+        const statusRows = rawStatusRows.value;
+        if (!statusRows.length) return null;
 
+        const onlineRows = rawOnlineRows.value;
         const bDays = bucketDays.value;
-        let firstDay = Infinity;
-        let lastDay = -Infinity;
+        const bMs = bDays * 86400000;
 
-        for (const row of rows) {
-            const day = daysSinceEpoch(row.createdAt);
-            if (day < firstDay) firstDay = day;
-            if (day > lastDay) lastDay = day;
+        // 1. Get total time range
+        let firstMs = Date.parse(statusRows[0].createdAt);
+        let lastMs = Date.parse(statusRows[statusRows.length - 1].createdAt);
+
+        if (onlineRows.length) {
+            const firstOnlineMs = Date.parse(onlineRows[0].createdAt);
+            const lastOnlineMs = Date.parse(onlineRows[onlineRows.length - 1].createdAt);
+            firstMs = Math.min(firstMs, firstOnlineMs);
+            lastMs = Math.max(lastMs, lastOnlineMs);
         }
 
-        if (!isFinite(firstDay)) return null;
+        const bucketCount = Math.ceil((lastMs - firstMs) / bMs) || 1;
+        const firstDay = Math.floor(firstMs / 86400000);
 
-        const bucketCount = Math.floor((lastDay - firstDay) / bDays) + 1;
+        // 2. Pre-process intervals
+        // Status Intervals: [start, end, status]
+        const statusIntervals = [];
+        for (let i = 0; i < statusRows.length; i++) {
+            const start = Date.parse(statusRows[i].createdAt);
+            const end = i < statusRows.length - 1 ? Date.parse(statusRows[i + 1].createdAt) : Date.now();
+            if (end > start) {
+                statusIntervals.push({ start, end, status: statusRows[i].status });
+            }
+        }
 
-        // Per-bucket counts per status
-        const counts = Array.from({ length: bucketCount }, () => ({
+        // Online Intervals: [start, end]
+        const onlineIntervals = [];
+        for (let i = 0; i < onlineRows.length; i++) {
+            if (onlineRows[i].type === 'Online') {
+                const start = Date.parse(onlineRows[i].createdAt);
+                // Look for next Offline
+                let end = Date.now();
+                for (let j = i + 1; j < onlineRows.length; j++) {
+                    if (onlineRows[j].type === 'Offline') {
+                        end = Date.parse(onlineRows[j].createdAt);
+                        break;
+                    }
+                    if (onlineRows[j].type === 'Online') {
+                        // Encountered another Online before Offline - VRCX likely missed an Offline or transitioned
+                        end = Date.parse(onlineRows[j].createdAt);
+                        break;
+                    }
+                }
+                if (end > start) {
+                    onlineIntervals.push({ start, end });
+                }
+            }
+        }
+
+        // 3. Intersect Status & Online to get Actual Duration Intervals
+        const activeIntervals = [];
+        if (onlineIntervals.length === 0) {
+            // Fallback: If no online records, assume online whenever there's a status
+            activeIntervals.push(...statusIntervals);
+        } else {
+            // Optimization: Since both are sorted, we could do a two-pointer pass, 
+            // but for typical VRCX log sizes, nested loop with early break is often fine.
+            for (const s of statusIntervals) {
+                for (const o of onlineIntervals) {
+                    if (o.start >= s.end) break;
+                    if (o.end <= s.start) continue;
+
+                    const intersectStart = Math.max(s.start, o.start);
+                    const intersectEnd = Math.min(s.end, o.end);
+                    if (intersectEnd > intersectStart) {
+                        activeIntervals.push({
+                            start: intersectStart,
+                            end: intersectEnd,
+                            status: s.status
+                        });
+                    }
+                }
+            }
+        }
+
+        // 4. Accumulate durations into buckets
+        const buckets = Array.from({ length: bucketCount }, () => ({
             active: 0,
             'join me': 0,
             'ask me': 0,
@@ -151,13 +217,24 @@
             total: 0
         }));
 
-        for (const row of rows) {
-            const day = daysSinceEpoch(row.createdAt);
-            const idx = Math.floor((day - firstDay) / bDays);
-            const bucket = counts[idx];
-            if (bucket && row.status in bucket) {
-                bucket[row.status]++;
-                bucket.total++;
+        for (const interval of activeIntervals) {
+            const statusKey = interval.status;
+            let current = interval.start;
+            const end = interval.end;
+
+            while (current < end) {
+                const bucketIdx = Math.floor((current - firstMs) / bMs);
+                if (bucketIdx < 0 || bucketIdx >= bucketCount) break;
+
+                const bucketEnd = firstMs + (bucketIdx + 1) * bMs;
+                const partEnd = Math.min(end, bucketEnd);
+                const duration = partEnd - current;
+
+                if (statusKey in buckets[bucketIdx]) {
+                    buckets[bucketIdx][statusKey] += duration;
+                    buckets[bucketIdx].total += duration;
+                }
+                current = partEnd;
             }
         }
 
@@ -176,7 +253,7 @@
             color: STATUS_COLORS[status],
             emphasis: { focus: 'series', areaStyle: { opacity: 0.95 } },
             blur: { areaStyle: { opacity: 0.3 } },
-            data: counts.map((b) => (b.total > 0 ? +((b[status] / b.total) * 100).toFixed(1) : 0))
+            data: buckets.map((b) => (b.total > 0 ? +((b[status] / b.total) * 100).toFixed(1) : 0))
         }));
 
         return { xLabels, series, bucketCount };
@@ -312,15 +389,21 @@
     async function loadData(forceRefresh = false) {
         const userId = userDialog.value?.id;
         if (!userId) return;
-        if (!forceRefresh && rawRows.value.length > 0 && lastLoadedUserId === userId) return;
+        if (!forceRefresh && rawStatusRows.value.length > 0 && lastLoadedUserId === userId) return;
 
         isLoading.value = true;
         try {
-            rawRows.value = await database.getStatusHistoryForUser(userId);
+            const [status, online] = await Promise.all([
+                database.getStatusHistoryForUser(userId),
+                database.getOnlineOfflineHistoryForUser(userId)
+            ]);
+            rawStatusRows.value = status;
+            rawOnlineRows.value = online;
             lastLoadedUserId = userId;
         } catch (err) {
             console.error('[StatusDistribution] Failed to load data', err);
-            rawRows.value = [];
+            rawStatusRows.value = [];
+            rawOnlineRows.value = [];
         } finally {
             isLoading.value = false;
         }
@@ -342,7 +425,8 @@
     watch(
         () => userDialog.value?.id,
         () => {
-            rawRows.value = [];
+            rawStatusRows.value = [];
+            rawOnlineRows.value = [];
             lastLoadedUserId = '';
             disposeChart();
         }

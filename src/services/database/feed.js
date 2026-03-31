@@ -206,6 +206,28 @@ const feed = {
     },
 
     /**
+     * Returns all online/offline records for a specific user, ordered by time.
+     * Used to calculate actual duration spent in each status.
+     *
+     * @param {string} userId
+     * @returns {Promise<Array<{createdAt: string, type: 'Online'|'Offline'}>>}
+     */
+    async getOnlineOfflineHistoryForUser(userId) {
+        const results = [];
+        await sqliteService.execute(
+            (row) => {
+                results.push({
+                    createdAt: row[0],
+                    type: row[1]
+                });
+            },
+            `SELECT created_at, type FROM ${dbVars.userPrefix}_feed_online_offline WHERE user_id = @userId ORDER BY created_at ASC`,
+            { '@userId': userId }
+        );
+        return results;
+    },
+
+    /**
      * Returns the most recent timestamp at which a friend arrived at the given
      * location, as recorded in the GPS feed table.  Works for both real
      * instances and "private" / "private:private" locations.

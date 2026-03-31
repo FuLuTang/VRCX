@@ -297,6 +297,23 @@ export function applyUser(json) {
                 ref.$location_at = ts;
             }
         }
+        if (changedProps.state && ref.id === userStore.currentUser.id) {
+            const newState = changedProps.state[1];
+            const oldState = changedProps.state[0];
+            if ((newState === 'online' && (oldState === 'offline' || oldState === 'active')) ||
+                ((newState === 'offline' || newState === 'active') && oldState === 'online')) {
+                database.addOnlineOfflineToDatabase({
+                    created_at: new Date().toJSON(),
+                    type: newState === 'online' ? 'Online' : 'Offline',
+                    userId: ref.id,
+                    displayName: ref.displayName,
+                    location: ref.location,
+                    worldName: '', // Will be resolved if needed
+                    groupName: '',
+                    time: newState === 'offline' ? (Date.now() - ref.$location_at) : ''
+                });
+            }
+        }
         handleUserUpdate(ref, changedProps);
         if (AppDebug.debugUserDiff) {
             delete changedProps.last_login;

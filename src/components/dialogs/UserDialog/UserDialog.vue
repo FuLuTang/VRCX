@@ -140,8 +140,8 @@
         // Insert Activity before JSON
         const jsonIdx = tabs.findIndex((tab) => tab.value === 'JSON');
         tabs.splice(jsonIdx, 0, { value: 'Activity', label: t('dialog.user.activity.header') });
-        // Insert Status Distribution before JSON (friends only)
-        if (userDialog.value.isFriend) {
+        // Insert Status Distribution before JSON (friends or self only)
+        if (userDialog.value.isFriend || userDialog.value.id === currentUser.value.id) {
             const jsonIdx2 = tabs.findIndex((tab) => tab.value === 'JSON');
             tabs.splice(jsonIdx2, 0, {
                 value: 'status-distribution',
