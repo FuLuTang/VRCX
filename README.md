@@ -92,7 +92,8 @@
     - 持续跟进上游 `vrcx-team/VRCX` 更新，比如原版最新的 Electron 40 内核、原版新增的好友热力图等，用着魔改版也能享受最新功能。
 
 # 开发者文档
-- [数据库架构预览 (DATABASE_SCHEMA.md)](./DATABASE_SCHEMA.md)
+- [数据库架构预览 (DATABASE_SCHEMA.md)](./docs/DATABASE_SCHEMA.md)
+- [数据刷新机制说明 (DATA_REFRESH.md)](./docs/DATA_REFRESH.md)
 
 # 从源码构建
 
