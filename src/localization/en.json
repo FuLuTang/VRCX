@@ -221,8 +221,15 @@
         },
         "tracked_nonfriends": {
             "tab_label": "Tracked",
-            "empty": "No tracked non-friends. Right-click a node in the relationship graph to track a non-friend.",
-            "remove_tooltip": "Remove from tracking"
+            "empty": "No tracked non-friends yet. Click \"+\" to add one by user ID, or use the \"⋯\" menu in any user's profile.",
+            "remove_tooltip": "Remove from tracking",
+            "add_button": "Add +",
+            "add_dialog_title": "Track a User",
+            "add_dialog_hint": "Enter the user ID manually (usr_xxx...), or open any user's profile in VRCX-jirai and use the \"⋯\" → \"Track\" option.",
+            "add_input_placeholder": "usr_xxx...",
+            "add_verify_error": "Could not retrieve user data. Please check the ID and try again.",
+            "add_confirm_question": "Is this user \"{name}\"?",
+            "add_back": "Back"
         }
     },
     "view": {
@@ -593,7 +600,9 @@
                     "untrack_tooltip": "Stop tracking this non-friend",
                     "track_hint": "Right-click a node in the graph to select it",
                     "added": "Now tracking {name}",
-                    "removed": "Stopped tracking {name}"
+                    "removed": "Stopped tracking {name}",
+                    "show_tooltip": "Show tracked non-friends in graph",
+                    "hide_tooltip": "Hide tracked non-friends in graph"
                 },
                 "manual_relations": {
                     "button_tooltip": "Manual friendship relations",
@@ -1426,7 +1435,9 @@
                 "unfriend_success_msg": "Unfriended",
                 "logout": "Logout",
                 "edit_note_memo": "Edit Note and Memo",
-                "reset_home": "Reset Home"
+                "reset_home": "Reset Home",
+                "track_stranger": "Track This User",
+                "untrack_stranger": "Stop Tracking This User"
             },
             "info": {
                 "header": "Info",

@@ -66,18 +66,15 @@
                         </Button>
                     </TooltipWrapper>
                     <TooltipWrapper
-                        :content="contextMenuTrackedNodeId
-                            ? (trackedNonFriendsStore.isTracked(contextMenuTrackedNodeId)
-                                ? t('view.charts.mutual_friend.tracked_nonfriend.untrack_tooltip')
-                                : t('view.charts.mutual_friend.tracked_nonfriend.track_tooltip'))
-                            : t('view.charts.mutual_friend.tracked_nonfriend.track_hint')"
+                        :content="showTrackedNonFriends
+                            ? t('view.charts.mutual_friend.tracked_nonfriend.hide_tooltip')
+                            : t('view.charts.mutual_friend.tracked_nonfriend.show_tooltip')"
                         side="top">
                         <Button
                             class="rounded-full"
                             size="icon"
-                            variant="ghost"
-                            :disabled="!contextMenuTrackedNodeId"
-                            @click="toggleTrackNode">
+                            :variant="showTrackedNonFriends ? 'secondary' : 'ghost'"
+                            @click="toggleShowTrackedNonFriends">
                             <UsersIcon />
                         </Button>
                     </TooltipWrapper>
@@ -599,9 +596,9 @@
     const selectedFriendId = ref(null);
 
     const contextMenuNodeId = ref(null);
-    const contextMenuTrackedNodeId = ref(null);
     const graphMeta = ref(new Map());
     const isRefreshingNode = ref(false);
+    const showTrackedNonFriends = ref(true);
 
     const EXCLUDED_FRIENDS_KEY = 'VRCX_MutualGraphExcludedFriends';
     const excludedFriendIds = useLocalStorage(EXCLUDED_FRIENDS_KEY, []);
@@ -1109,6 +1106,12 @@
         sigmaInstance.setSetting('nodeReducer', (node, data) => {
             const res = { ...data };
 
+            // Hide tracked non-friends when toggle is off
+            if (data.trackedNonFriend && !showTrackedNonFriends.value) {
+                res.hidden = true;
+                return res;
+            }
+
             if (data.optedOut) {
                 res.borderColor = '#9ca3af';
             }
@@ -1204,12 +1207,10 @@
 
         sigmaInstance.on('rightClickNode', ({ node }) => {
             contextMenuNodeId.value = node || null;
-            contextMenuTrackedNodeId.value = node || null;
         });
 
         sigmaInstance.on('rightClickStage', () => {
             contextMenuNodeId.value = null;
-            contextMenuTrackedNodeId.value = null;
         });
 
         sigmaInstance.refresh();
@@ -1421,25 +1422,10 @@
     }
 
     /**
-     * Toggle tracking a non-friend node selected via right-click in the graph.
+     * Toggle visibility of tracked non-friends in the graph.
      */
-    async function toggleTrackNode() {
-        const nodeId = contextMenuTrackedNodeId.value;
-        if (!nodeId) return;
-        const cached = cachedUsers.get(nodeId);
-        const displayName = cached?.displayName || nodeId;
-        await trackedNonFriendsStore.toggleTrackedNonFriend(nodeId, displayName);
-        // Refresh graph node attribute so opacity updates
-        if (currentGraph && currentGraph.hasNode(nodeId)) {
-            currentGraph.setNodeAttribute(nodeId, 'trackedNonFriend', trackedNonFriendsStore.isTracked(nodeId));
-            sigmaInstance?.refresh();
-        }
-        const isNowTracked = trackedNonFriendsStore.isTracked(nodeId);
-        toast.success(
-            isNowTracked
-                ? t('view.charts.mutual_friend.tracked_nonfriend.added', { name: displayName })
-                : t('view.charts.mutual_friend.tracked_nonfriend.removed', { name: displayName }),
-            { duration: 3000 }
-        );
+    function toggleShowTrackedNonFriends() {
+        showTrackedNonFriends.value = !showTrackedNonFriends.value;
+        sigmaInstance?.refresh();
     }
 </script>
