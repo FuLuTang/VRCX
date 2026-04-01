@@ -60,6 +60,20 @@
                     </VirtualCombobox>
                 </div>
                 <div class="ml-auto flex items-center gap-2">
+                    <div v-if="graphReady" class="mr-4 hidden items-center gap-4 text-xs font-medium text-muted-foreground sm:flex">
+                        <div class="flex items-center gap-1.5">
+                            <div class="size-2 rounded-full" :style="{ backgroundColor: isDarkMode ? '#64748b' : '#94a3b8' }"></div>
+                            <span>{{ t('view.charts.mutual_friend.legend.mutual') }}</span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <div class="size-2 rounded-full" :style="{ backgroundColor: isDarkMode ? '#31543d' : '#dcfce7' }"></div>
+                            <span>{{ t('view.charts.mutual_friend.legend.manual') }}</span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <div class="size-2 rounded-full" :style="{ backgroundColor: isDarkMode ? '#543131' : '#fee2e2' }"></div>
+                            <span>{{ t('view.charts.mutual_friend.legend.non_friend') }}</span>
+                        </div>
+                    </div>
                     <TooltipWrapper :content="t('view.charts.mutual_friend.manual_relations.button_tooltip')" side="top">
                         <Button class="rounded-full" size="icon" variant="ghost" @click="isManualRelationsDialogOpen = true">
                             <LinkIcon />
@@ -1000,12 +1014,12 @@
         const DEFAULT_LABEL_THRESHOLD = 10;
 
         const labelColor = isDarkMode.value ? '#e2e8f0' : '#111827';
-        const EDGE_BASE = isDarkMode.value ? '#334155' : '#94a3b8';
-        const EDGE_ACTIVE = isDarkMode.value ? '#bac1c9' : '#0f172a';
-        const EDGE_NONFRIEND_MANUAL = EDGE_BASE + 'B3'; // 70% opacity
-        const EDGE_NONFRIEND_MANUAL_ACTIVE = EDGE_ACTIVE + 'B3';
-        const EDGE_FRIEND_MANUAL = isDarkMode.value ? '#22c55e' : '#16a34a';
-        const EDGE_FRIEND_MANUAL_ACTIVE = isDarkMode.value ? '#4ade80' : '#15803d';
+        
+        // Simple dark/light logic - works well for both Dark and Midnight
+        const EDGE_BASE = isDarkMode.value ? '#64748b' : '#94a3b8'; // Regular mutual (Friend-Friend)
+        const EDGE_ACTIVE = isDarkMode.value ? '#facc15' : '#0f172a'; // Active focus (Yellow in dark mode)
+        const EDGE_MANUAL = isDarkMode.value ? '#31543d' : '#dcfce7'; // Darker Greenish / Light Greenish
+        const EDGE_NONFRIEND = isDarkMode.value ? '#543131' : '#fee2e2'; // Darker Reddish / Light Reddish
 
         let cameraState = null;
 
@@ -1118,12 +1132,10 @@
                 res.borderColor = '#9ca3af';
             }
 
-            // Tracked non-friends: apply 50% transparency
+            // Non-friends: grey
             if (data.trackedNonFriend) {
-                res.color = data.color
-                    ? data.color.replace(/^#([0-9a-f]{6})$/i, (_, hex) => `#${hex}80`)
-                    : 'rgba(148,163,184,0.5)';
-                res.labelColor = 'rgba(148,163,184,0.5)';
+                res.color = '#9ca3af';
+                res.labelColor = '#9ca3af';
             }
 
             if (!hovered) {
@@ -1166,13 +1178,21 @@
             const res = { ...data };
             const isManual = data.manualRelation === true;
             const extremities = graph.extremities(edge);
-            const isNonFriendEdge = isManual && extremities.some(n => graph.getNodeAttribute(n, 'trackedNonFriend'));
+            // Any edge connected to at least one non-friend node
+            const isNonFriendEdge = extremities.some(n => graph.getNodeAttribute(n, 'trackedNonFriend'));
 
             if (!hovered) {
                 res.hidden = false;
-                res.color = isNonFriendEdge ? EDGE_NONFRIEND_MANUAL : (isManual ? EDGE_FRIEND_MANUAL : EDGE_BASE);
-                res.size = isManual ? 1.5 : data.size || 1;
-                if (isNonFriendEdge) res.type = 'dashed';
+                if (isNonFriendEdge) {
+                    res.color = EDGE_NONFRIEND;
+                    res.size = 0.6;
+                } else if (isManual) {
+                    res.color = EDGE_MANUAL;
+                    res.size = 0.6;
+                } else {
+                    res.color = EDGE_BASE;
+                    res.size = data.size || 1;
+                }
                 return res;
             }
 
@@ -1180,9 +1200,8 @@
 
             if (active) {
                 res.hidden = false;
-                res.color = isNonFriendEdge ? EDGE_NONFRIEND_MANUAL_ACTIVE : (isManual ? EDGE_FRIEND_MANUAL_ACTIVE : EDGE_ACTIVE);
-                res.size = isManual ? 2 : data.size || 1;
-                if (isNonFriendEdge) res.type = 'dashed';
+                res.color = EDGE_ACTIVE;
+                res.size = isNonFriendEdge || isManual ? 1.2 : 2.0;
                 return res;
             }
 

@@ -457,7 +457,12 @@
                     "suggest_score": "评分: {score}",
                     "suggest_confirm": "添加",
                     "suggest_dismiss": "跳过",
-                    "suggest_none": "没有找到推荐配对，请先抓取共同好友数据。"
+                    "suggest_none": "没有找到推荐配对，请先抓取共同好友数据。",
+                    "legend": {
+                        "mutual": "共同好友关系",
+                        "manual": "手动添加关系",
+                        "non_friend": "包含非好友"
+                    }
                 }
             },
             "hot_worlds": {
@@ -583,15 +588,18 @@
                 "launch_options_description": "编辑 VRChat 的启动选项",
                 "registry_backup": "VRChat 设置数据备份工具",
                 "registry_backup_description": "创建或恢复 VRChat 的设置备份",
-                "bio_fetch": "信息抓取补全",
-                "bio_fetch_description": "扫描所有好友缓存中的简介，将新增或变更的简介保存到数据库",
-                "bio_fetch_hint": "准备好扫描 {count} 位好友。",
-                "bio_fetch_start": "开始抓取",
-                "bio_fetch_again": "再次抓取",
-                "bio_fetch_cancel": "取消",
-                "bio_fetch_close": "关闭",
-                "bio_fetch_progress": "正在扫描 {current} / {total}...",
-                "bio_fetch_done": "完成 — 共保存了 {total} 位好友中 {updated} 条新增/变更的简介。"
+                "info_completion": "信息抓取补全",
+                "info_completion_description": "扫描所有好友与追踪非好友的资料，将新增或变更的简介及状态保存到数据库",
+                "info_completion_hint": "准备好扫描 {count} 个目标。",
+                "info_completion_start": "开始抓取",
+                "info_completion_again": "再次抓取",
+                "info_completion_cancel": "取消",
+                "info_completion_close": "关闭",
+                "info_completion_progress": "正在扫描 {current} / {total}...",
+                "info_completion_done": "完成 — 共保存了 {total} 个目标中 {updated} 条新增/变更的信息。",
+                "info_completion_tooltip_running": "信息同步中 {done}/{total} (Bio +{bio}, Status +{status})",
+                "info_completion_tooltip_done": "同步完成：Bio 更新 {bio} 条, Status 更新 {status} 条 (点击重新同步)",
+                "info_completion_tooltip_idle": "信息同步 (点击开始)"
             },
             "other": {
                 "header": "其它",
@@ -2592,5 +2600,8 @@
                 "unavailable": "服务可能由于 VRChat 内部问题而不可用"
             }
         }
+    },
+    "status_bar": {
+        "info_sync": "同步"
     }
 }

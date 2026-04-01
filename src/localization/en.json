@@ -623,6 +623,11 @@
                     "suggest_confirm": "Add",
                     "suggest_dismiss": "Skip",
                     "suggest_none": "No suggestions found. Try fetching mutual friend data first."
+                },
+                "legend": {
+                    "mutual": "Mutual Relationship",
+                    "manual": "Manual Relation",
+                    "non_friend": "Includes Non-friend"
                 }
             },
             "hot_worlds": {
@@ -748,15 +753,18 @@
                 "launch_options_description": "Edit VRChat launch options",
                 "registry_backup": "VRChat Registry Backup",
                 "registry_backup_description": "Create or restore a VRChat registry backup",
-                "bio_fetch": "Bio Completion Fetch",
-                "bio_fetch_description": "Scan all friends' cached bios and save any new or changed bios to the database",
-                "bio_fetch_hint": "Ready to scan {count} friends.",
-                "bio_fetch_start": "Start Fetch",
-                "bio_fetch_again": "Fetch Again",
-                "bio_fetch_cancel": "Cancel",
-                "bio_fetch_close": "Close",
-                "bio_fetch_progress": "Scanning {current} / {total}...",
-                "bio_fetch_done": "Done — saved {updated} new/changed bios out of {total} friends."
+                "info_completion": "Profile Info Sync & Completion",
+                "info_completion_description": "Scan and fetch the latest profiles for all friends and tracked users, saving new or updated bios and status to the database.",
+                "info_completion_hint": "Ready to scan {count} targets.",
+                "info_completion_start": "Start Sync",
+                "info_completion_again": "Sync Again",
+                "info_completion_cancel": "Cancel",
+                "info_completion_close": "Close",
+                "info_completion_progress": "Scanning {current} / {total}...",
+                "info_completion_done": "Done — saved {updated} updates from {total} targets.",
+                "info_completion_tooltip_running": "Syncing Info {done}/{total} (Bio +{bio}, Status +{status})",
+                "info_completion_tooltip_done": "Sync Done: Updated {bio} bios, {status} statuses (Click to re-sync)",
+                "info_completion_tooltip_idle": "Profile Info Sync (Click to start)"
             },
             "other": {
                 "header": "Other",
@@ -3233,6 +3241,7 @@
         "clock": "Clock",
         "clocks_label": "Clocks",
         "clocks_none": "None",
+        "info_sync": "Sync",
         "timezone": "Timezone"
     }
 }
