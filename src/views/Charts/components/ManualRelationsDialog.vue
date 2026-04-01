@@ -144,7 +144,7 @@
     import dayjs from 'dayjs';
 
     import { useManualRelationsStore } from '../../../stores/manualRelations';
-    import { useFriendStore, useUserStore } from '../../../stores';
+    import { useFriendStore, useTrackedNonFriendsStore, useUserStore } from '../../../stores';
     import { database } from '../../../services/database';
     import { showUserDialog } from '../../../coordinators/userCoordinator';
 
@@ -156,7 +156,9 @@
 
     const friendStore = useFriendStore();
     const userStore = useUserStore();
+    const trackedStore = useTrackedNonFriendsStore();
     const { friends } = storeToRefs(friendStore);
+    const { trackedList } = storeToRefs(trackedStore);
     const cachedUsers = userStore.cachedUsers;
 
     // ---- User picker helper component ----
@@ -176,12 +178,26 @@
     // ---- Picker groups (friends + tracked users) ----
     const friendPickerGroups = computed(() => {
         const items = [];
+        const seenIds = new Set();
+
+        // 1. Friends
         for (const [id, ctx] of friends.value.entries()) {
             const displayName = ctx.ref?.displayName || ctx.name || id;
             items.push({ value: id, label: displayName, search: displayName });
+            seenIds.add(id);
         }
+
+        // 2. Tracked Non-Friends
+        for (const item of trackedList.value) {
+            if (!seenIds.has(item.userId)) {
+                const displayName = item.displayName || item.userId;
+                items.push({ value: item.userId, label: displayName, search: displayName });
+                seenIds.add(item.userId);
+            }
+        }
+
         items.sort((a, b) => a.label.localeCompare(b.label));
-        return [{ key: 'friends', label: t('side_panel.friends'), items }];
+        return [{ key: 'users', label: '全部追踪目标', items }];
     });
 
     // ---- Enrich relation list with display names ----
