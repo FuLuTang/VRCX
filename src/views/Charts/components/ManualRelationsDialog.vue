@@ -233,9 +233,9 @@
 
     /**
      * Score-based "most likely friend" algorithm:
-     * - For each tracked non-friend user X, look at mutual-graph links_old to find
+     * - For each tracked non-friend user X, look at mutual-graph snapshots to find
      *   which friends appear most alongside them.
-     * - Score = number of common mutual friends (from _mutual_graph_links).
+     * - Score = number of common mutual friends (from getMutualGraphSnapshot / getMutualGraphSnapshotFromOld).
      * - Exclude pairs already in manual_relations_MANUEL or already friends.
      */
     async function runSuggestion() {

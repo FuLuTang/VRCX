@@ -371,6 +371,7 @@
     const { currentUser } = storeToRefs(userStore);
     const { isDarkMode } = storeToRefs(appearanceStore);
     const { trackedSet: trackedNonFriendSet } = storeToRefs(trackedNonFriendsStore);
+    const { relationsList: manualRelationsList } = storeToRefs(manualRelationsStore);
     const cachedUsers = userStore.cachedUsers;
 
     const fetchState = chartsStore.mutualGraphFetchState;
@@ -611,6 +612,16 @@
                 await applyGraph(lastMutualMap);
             } catch (err) {
                 console.error('[MutualNetworkGraph] Failed to apply graph after exclude change', err);
+            }
+        }
+    });
+
+    watch(manualRelationsList, async () => {
+        if (lastMutualMap) {
+            try {
+                await applyGraph(lastMutualMap);
+            } catch (err) {
+                console.error('[MutualNetworkGraph] Failed to apply graph after manual-relations change', err);
             }
         }
     });
@@ -922,6 +933,27 @@
             }
         }
 
+        // Inject manual-relation edges (may introduce nodes not in mutualMap)
+        for (const rel of manualRelationsList.value) {
+            const { userIdA, userIdB } = rel;
+            if (!userIdA || !userIdB) continue;
+            const refA = cachedUsers.get(userIdA);
+            const refB = cachedUsers.get(userIdB);
+            ensureNode(userIdA, refA?.displayName || userIdA);
+            ensureNode(userIdB, refB?.displayName || userIdB);
+            if (!excludeSet.has(userIdA) && !excludeSet.has(userIdB)) {
+                const [a, b] = [userIdA, userIdB].sort();
+                const key = `${a}__${b}`;
+                if (!graph.hasEdge(key)) {
+                    graph.addEdgeWithKey(key, a, b, { size: 0.75, manualRelation: true });
+                    nodeDegree.set(a, (nodeDegree.get(a) || 0) + 1);
+                    nodeDegree.set(b, (nodeDegree.get(b) || 0) + 1);
+                } else {
+                    graph.setEdgeAttribute(key, 'manualRelation', true);
+                }
+            }
+        }
+
         const nodeIds = graph.nodes();
         const maxDegree = nodeIds.reduce((max, id) => Math.max(max, nodeDegree.get(id) || 0), 0);
 
@@ -973,6 +1005,8 @@
         const labelColor = isDarkMode.value ? '#e2e8f0' : '#111827';
         const EDGE_BASE = isDarkMode.value ? '#334155' : '#94a3b8';
         const EDGE_ACTIVE = isDarkMode.value ? '#bac1c9' : '#0f172a';
+        const EDGE_MANUAL = isDarkMode.value ? '#22c55e' : '#16a34a';
+        const EDGE_MANUAL_ACTIVE = isDarkMode.value ? '#4ade80' : '#15803d';
 
         let cameraState = null;
 
@@ -1125,11 +1159,12 @@
 
         sigmaInstance.setSetting('edgeReducer', (edge, data) => {
             const res = { ...data };
+            const isManual = data.manualRelation === true;
 
             if (!hovered) {
                 res.hidden = false;
-                res.color = EDGE_BASE;
-                res.size = data.size || 1;
+                res.color = isManual ? EDGE_MANUAL : EDGE_BASE;
+                res.size = isManual ? 1.5 : data.size || 1;
                 return res;
             }
 
@@ -1138,8 +1173,8 @@
 
             if (active) {
                 res.hidden = false;
-                res.color = EDGE_ACTIVE;
-                res.size = data.size || 1;
+                res.color = isManual ? EDGE_MANUAL_ACTIVE : EDGE_ACTIVE;
+                res.size = isManual ? 2 : data.size || 1;
                 return res;
             }
 
