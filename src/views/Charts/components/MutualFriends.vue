@@ -1116,7 +1116,11 @@
         let neighbors = new Set();
 
         const rebuildNeighbors = (node) => {
-            neighbors = node ? new Set(graph.neighbors(node)) : new Set();
+            try {
+                neighbors = node && graph.hasNode(node) ? new Set(graph.neighbors(node)) : new Set();
+            } catch {
+                neighbors = new Set();
+            }
         };
 
         sigmaInstance.setSetting('nodeReducer', (node, data) => {
@@ -1177,9 +1181,23 @@
         sigmaInstance.setSetting('edgeReducer', (edge, data) => {
             const res = { ...data };
             const isManual = data.manualRelation === true;
-            const extremities = graph.extremities(edge);
+
+            // Safety: graph.extremities() throws if the edge no longer exists
+            // in the captured graph reference (can happen during rebuild races).
+            let extremities;
+            try {
+                extremities = graph.extremities(edge);
+            } catch {
+                return res;
+            }
+
             // Any edge connected to at least one non-friend node
-            const isNonFriendEdge = extremities.some(n => graph.getNodeAttribute(n, 'trackedNonFriend'));
+            let isNonFriendEdge = false;
+            try {
+                isNonFriendEdge = extremities.some(n => graph.hasNode(n) && graph.getNodeAttribute(n, 'trackedNonFriend'));
+            } catch {
+                // node may have been dropped during rebuild
+            }
 
             if (!hovered) {
                 res.hidden = false;
@@ -1196,7 +1214,7 @@
                 return res;
             }
 
-            const active = extremities.includes(hovered);
+            const active = extremities[0] === hovered || extremities[1] === hovered;
 
             if (active) {
                 res.hidden = false;
