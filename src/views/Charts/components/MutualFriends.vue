@@ -1002,8 +1002,10 @@
         const labelColor = isDarkMode.value ? '#e2e8f0' : '#111827';
         const EDGE_BASE = isDarkMode.value ? '#334155' : '#94a3b8';
         const EDGE_ACTIVE = isDarkMode.value ? '#bac1c9' : '#0f172a';
-        const EDGE_MANUAL = isDarkMode.value ? '#22c55e' : '#16a34a';
-        const EDGE_MANUAL_ACTIVE = isDarkMode.value ? '#4ade80' : '#15803d';
+        const EDGE_NONFRIEND_MANUAL = EDGE_BASE + 'B3'; // 70% opacity
+        const EDGE_NONFRIEND_MANUAL_ACTIVE = EDGE_ACTIVE + 'B3';
+        const EDGE_FRIEND_MANUAL = isDarkMode.value ? '#22c55e' : '#16a34a';
+        const EDGE_FRIEND_MANUAL_ACTIVE = isDarkMode.value ? '#4ade80' : '#15803d';
 
         let cameraState = null;
 
@@ -1163,21 +1165,24 @@
         sigmaInstance.setSetting('edgeReducer', (edge, data) => {
             const res = { ...data };
             const isManual = data.manualRelation === true;
+            const extremities = graph.extremities(edge);
+            const isNonFriendEdge = isManual && extremities.some(n => graph.getNodeAttribute(n, 'trackedNonFriend'));
 
             if (!hovered) {
                 res.hidden = false;
-                res.color = isManual ? EDGE_MANUAL : EDGE_BASE;
+                res.color = isNonFriendEdge ? EDGE_NONFRIEND_MANUAL : (isManual ? EDGE_FRIEND_MANUAL : EDGE_BASE);
                 res.size = isManual ? 1.5 : data.size || 1;
+                if (isNonFriendEdge) res.type = 'dashed';
                 return res;
             }
 
-            const [s, t] = graph.extremities(edge);
-            const active = s === hovered || t === hovered;
+            const active = extremities.includes(hovered);
 
             if (active) {
                 res.hidden = false;
-                res.color = isManual ? EDGE_MANUAL_ACTIVE : EDGE_ACTIVE;
+                res.color = isNonFriendEdge ? EDGE_NONFRIEND_MANUAL_ACTIVE : (isManual ? EDGE_FRIEND_MANUAL_ACTIVE : EDGE_ACTIVE);
                 res.size = isManual ? 2 : data.size || 1;
+                if (isNonFriendEdge) res.type = 'dashed';
                 return res;
             }
 
