@@ -258,7 +258,7 @@
     import TooltipWrapper from '@/components/ui/tooltip/TooltipWrapper.vue';
     import Location from '@/components/Location.vue';
 
-    import { showInstanceDialog } from '@/coordinators/instanceCoordinator';
+    import { showWorldDialog } from '@/coordinators/worldCoordinator';
     import { database } from '@/services/database';
     import { parseLocation } from '@/shared/utils/locationParser';
     import { timeToText } from '@/shared/utils';
@@ -469,9 +469,8 @@
     }
 
     function openInstanceDialog(location) {
-        const parsed = parseLocation(location);
-        if (parsed.worldId && parsed.instanceId) {
-            showInstanceDialog(parsed.worldId, parsed.instanceId);
+        if (location) {
+            showWorldDialog(location);
         }
     }
 
