@@ -458,11 +458,16 @@
         { value: 'Sort by Location', label: t('view.settings.appearance.side_panel.sorting.location') }
     ]);
 
-    const sidebarTabs = computed(() => [
-        { value: 'friends', label: t('side_panel.friends') },
-        { value: 'groups', label: t('side_panel.groups') },
-        { value: 'tracked', label: t('side_panel.tracked_nonfriends.tab_label') }
-    ]);
+    const sidebarTabs = computed(() => {
+        const tabs = [{ value: 'friends', label: t('side_panel.friends') }];
+
+        if (groupInstances.value.length > 0) {
+            tabs.push({ value: 'groups', label: t('side_panel.groups') });
+        }
+
+        tabs.push({ value: 'tracked', label: t('side_panel.tracked_nonfriends.tab_label') });
+        return tabs;
+    });
 </script>
 
 <style scoped>
