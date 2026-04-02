@@ -173,18 +173,21 @@ function updateIndex(payload) {
 
 function searchFriends(query, cleanQuery, comparer, limit = 10) {
     const results = [];
+    const trimmedQuery = query.trim();
+    const canSearchExtraFields = trimmedQuery.length >= 2;
+
     for (const ctx of indexedFriends) {
         let match = matchName(ctx.name, cleanQuery, comparer, ctx._normalized);
         let matchedField = match ? 'name' : null;
-        if (!match && ctx.memo) {
+        if (!match && canSearchExtraFields && ctx.memo) {
             match = localeIncludes(ctx.memo, query, comparer);
             if (match) matchedField = 'memo';
         }
-        if (!match && ctx.note) {
+        if (!match && canSearchExtraFields && ctx.note) {
             match = localeIncludes(ctx.note, query, comparer);
             if (match) matchedField = 'note';
         }
-        if (!match && ctx.bio) {
+        if (!match && canSearchExtraFields && ctx.bio) {
             match = localeIncludes(ctx.bio, query, comparer);
             if (match) matchedField = 'bio';
         }
@@ -261,7 +264,7 @@ function searchItems(
 function handleSearch(payload) {
     const { seq, query, currentUserId, language } = payload;
 
-    if (query === undefined) {
+    if (!query || query.trim().length === 0) {
         self.postMessage({
             type: 'searchResult',
             payload: {

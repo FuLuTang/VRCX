@@ -146,7 +146,7 @@ export const useQuickSearchStore = defineStore('QuickSearch', () => {
 
     function dispatchSearch() {
         const q = query.value;
-        if (q === undefined) {
+        if (!q || q.trim().length === 0) {
             ++searchSeq;
             clearResults();
             return;
