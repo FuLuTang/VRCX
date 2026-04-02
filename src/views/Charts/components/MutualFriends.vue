@@ -396,8 +396,7 @@
 
     const COLORS_PALETTE = [
         '#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc',
-        '#d94e5d', '#eac736', '#50a3ba', '#2f4554', '#61a0a8', '#d48265', '#749f83', '#ca8622', '#bda29a',
-        '#6e7074', '#546570', '#c4ccd3', '#f2d643', '#ffb980', '#0098d9'
+        '#d94e5d', '#eac736', '#50a3ba', '#f2d643', '#ffb980', '#0098d9', '#ff8c00', '#ff00ff', '#1e90ff'
     ];
 
     const NodeBorderProgram = createNodeBorderProgram({

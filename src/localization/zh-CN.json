@@ -379,7 +379,8 @@
                     "start_fetch": "开始拉取",
                     "fetch_again": "再次拉取",
                     "stop": "停止",
-                    "stop_fetching": "停止拉取"
+                    "stop_fetching": "停止拉取",
+                    "go_to_friend": "前往该玩家"
                 },
                 "status": {
                     "no_friends_to_process": "目前没有好友需要处理",
@@ -417,7 +418,13 @@
                     "layout_spacing": "节点间距",
                     "layout_spacing_help": "好友节点的分布范围。数值越高，关系网内的节点距离越远。",
                     "edge_curvature": "连接线曲率",
-                    "edge_curvature_help": "连接线的弯曲程度。数值越高，密集区域的线条越平滑。"
+                    "edge_curvature_help": "连接线的弯曲程度。数值越高，密集区域的线条越平滑。",
+                    "community_separation": "社群间距",
+                    "community_separation_help": "不同社交圈子之间的距离。数值越高，圈子之间的划分越明显。",
+                    "reset_defaults": "恢复默认设置",
+                    "exclude_friends": "排除好友",
+                    "exclude_friends_placeholder": "选择要排除的好友...",
+                    "exclude_friends_help": "所选好友将不会显示在关系网中。"
                 },
                 "tracked_nonfriend": {
                     "track_tooltip": "追踪此非好友",
@@ -457,12 +464,12 @@
                     "suggest_score": "评分: {score}",
                     "suggest_confirm": "添加",
                     "suggest_dismiss": "跳过",
-                    "suggest_none": "没有找到推荐配对，请先抓取共同好友数据。",
-                    "legend": {
-                        "mutual": "共同好友关系",
-                        "manual": "手动添加关系",
-                        "non_friend": "包含非好友"
-                    }
+                    "suggest_none": "没有找到推荐配对，请先抓取共同好友数据。"
+                },
+                "legend": {
+                    "mutual": "好友/共同好友",
+                    "manual": "手动添加关系",
+                    "non_friend": "包含非好友"
                 }
             },
             "hot_worlds": {
