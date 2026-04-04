@@ -290,8 +290,12 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
             // Strip "VRCX-Jirai " or "VRCX-Jirai Nightly " prefix for comparison
             const currentVersionStripped = currentVersion.value
                 .replace(/^VRCX-Jirai(?:\s+Nightly)?\s+/, '')
+                .replace(/^v/, '')
                 .trim();
-            if (latestVersionName !== currentVersionStripped) {
+            const latestVersionStripped = latestVersionName
+                .replace(/^v/, '')
+                .trim();
+            if (latestVersionStripped !== currentVersionStripped) {
                 pendingVRCXUpdate.value = true;
             }
         }
@@ -354,7 +358,8 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
             }
         }
         D.releases = releases;
-        D.release = releases.length > 0 ? releases[0].name : (json.length > 0 ? json[0].name : '');
+        const latestRelease = releases.length > 0 ? releases[0] : (json.length > 0 ? json[0] : null);
+        D.release = latestRelease ? (latestRelease.tag_name || latestRelease.name) : '';
         VRCXUpdateDialog.value.updatePendingIsLatest = false;
         if (D.release === pendingVRCXInstall.value) {
             // update already downloaded and latest version
@@ -392,7 +397,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
     }
     function installVRCXUpdate() {
         for (const release of VRCXUpdateDialog.value.releases) {
-            if (release.name !== VRCXUpdateDialog.value.release) {
+            if ((release.tag_name || release.name) !== VRCXUpdateDialog.value.release) {
                 continue;
             }
             const { downloadUrl, hashString, size } = getAssetOfInterest(
