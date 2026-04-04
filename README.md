@@ -117,7 +117,8 @@
 请参考上游仓库的 [Building from source](https://github.com/vrcx-team/VRCX/wiki/Building-from-source) 说明进行构建。
 
 # Contact 社群
-QQ群号: `1043634732`
+- `QQ群号`: ██████████
+- `Discord`: [福禄器](https://discord.gg/gDDCWqvKUw)
 
 ---
 
