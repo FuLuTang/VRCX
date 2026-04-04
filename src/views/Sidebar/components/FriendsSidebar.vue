@@ -200,7 +200,7 @@
         </div>
         <BackToTop :virtualizer="virtualizer" :target="scrollViewportRef" :tooltip="false" />
 
-        <div class="absolute bottom-5 right-[70px] z-10">
+<!-- <div class="absolute bottom-5 right-[70px] z-10">
             <button
                 class="auto-follow-btn"
                 :class="{ 'auto-follow-btn--active': autoFollowStore.isActive }"
@@ -208,7 +208,7 @@
                 {{ autoFollowStore.isActive ? '跟随中 ■' : '自动跟随' }}
                 <Navigation class="w-3.5 h-3.5 ml-1.5" />
             </button>
-        </div>
+        </div> -->
     </div>
 </template>
 
