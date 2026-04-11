@@ -1,0 +1,127 @@
+[
+    {
+        "label": "dev: vite (frontend)",
+        "command": "npm",
+        "args": ["run", "dev"],
+        "reveal": "always",
+        "allow_concurrent_runs": false,
+        "tags": ["dev"]
+    },
+    {
+        "label": "dev: electron (hot reload)",
+        "command": "npm",
+        "args": ["run", "start-electron"],
+        "reveal": "always",
+        "allow_concurrent_runs": false,
+        "tags": ["dev"]
+    },
+    {
+        "label": "build: frontend (prod)",
+        "command": "npm",
+        "args": ["run", "prod"],
+        "reveal": "always",
+        "tags": ["build"]
+    },
+    {
+        "label": "build: backend (.NET Release x64)",
+        "command": "dotnet",
+        "args": [
+            "build",
+            "Dotnet/VRCX-Cef.csproj",
+            "-p:Configuration=Release",
+            "-p:Platform=x64"
+        ],
+        "reveal": "always",
+        "tags": ["build"]
+    },
+    {
+        "label": "build: full local (Windows portable)",
+        "command": "cmd",
+        "args": ["/c", "build-windows-local.bat"],
+        "reveal": "always",
+        "tags": ["build"]
+    },
+    {
+        "label": "build: electron installer (x64)",
+        "command": "npm",
+        "args": ["run", "build-electron"],
+        "reveal": "always",
+        "tags": ["build"]
+    },
+    {
+        "label": "build: electron installer (arm64)",
+        "command": "npm",
+        "args": ["run", "build-electron-arm64"],
+        "reveal": "always",
+        "tags": ["build"]
+    },
+    {
+        "label": "lint (oxlint + eslint)",
+        "command": "npm",
+        "args": ["run", "lint"],
+        "reveal": "always",
+        "tags": ["lint"]
+    },
+    {
+        "label": "lint: eslint only",
+        "command": "npm",
+        "args": ["run", "lint:eslint"],
+        "reveal": "always",
+        "tags": ["lint"]
+    },
+    {
+        "label": "lint: oxlint only",
+        "command": "npm",
+        "args": ["run", "lint:oxlint"],
+        "reveal": "always",
+        "tags": ["lint"]
+    },
+    {
+        "label": "typecheck (js/ts)",
+        "command": "npm",
+        "args": ["run", "typecheck:js"],
+        "reveal": "always",
+        "tags": ["check"]
+    },
+    {
+        "label": "test: run",
+        "command": "npm",
+        "args": ["run", "test"],
+        "reveal": "always",
+        "tags": ["test"]
+    },
+    {
+        "label": "test: watch",
+        "command": "npx",
+        "args": ["vitest"],
+        "reveal": "always",
+        "allow_concurrent_runs": false,
+        "tags": ["test"]
+    },
+    {
+        "label": "test: coverage",
+        "command": "npm",
+        "args": ["run", "test:coverage"],
+        "reveal": "always",
+        "tags": ["test"]
+    },
+    {
+        "label": "npm: install",
+        "command": "npm",
+        "args": ["install"],
+        "reveal": "always"
+    },
+    {
+        "label": "localization: update",
+        "command": "npm",
+        "args": ["run", "localization"],
+        "reveal": "always"
+    },
+    {
+        "label": "kill: running VRCX-Jirai.exe",
+        "command": "taskkill",
+        "args": ["/F", "/IM", "VRCX-Jirai.exe", "/T"],
+        "reveal": "always",
+        "ignore_cancel": true
+    }
+]

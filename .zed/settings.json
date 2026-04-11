@@ -1,0 +1,97 @@
+{
+    "tab_size": 4,
+    "hard_tabs": false,
+    "ensure_final_newline_on_save": true,
+    "remove_trailing_whitespace_on_save": true,
+    "format_on_save": "off",
+    "auto_install_extensions": {
+        "vue": true,
+        "csharp": true,
+        "tailwindcss": true
+    },
+    "languages": {
+        "Vue.js": {
+            "tab_size": 4
+        },
+        "JavaScript": {
+            "tab_size": 4
+        },
+        "TypeScript": {
+            "tab_size": 4
+        },
+        "TSX": {
+            "tab_size": 4
+        },
+        "JSX": {
+            "tab_size": 4
+        },
+        "JSON": {
+            "tab_size": 4
+        },
+        "JSONC": {
+            "tab_size": 4
+        },
+        "HTML": {
+            "tab_size": 4
+        },
+        "CSS": {
+            "tab_size": 4
+        },
+        "C#": {
+            "tab_size": 4
+        }
+    },
+    "lsp": {
+        "tailwindcss-language-server": {
+            "settings": {
+                "tailwindCSS": {
+                    "experimental": {
+                        "classRegex": [
+                            ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
+                            ["cn\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
+                            ["cx\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"]
+                        ]
+                    },
+                    "includeLanguages": {
+                        "vue": "html",
+                        "vue-html": "html"
+                    }
+                }
+            }
+        },
+        "vtsls": {
+            "settings": {
+                "typescript": {
+                    "tsserver": {
+                        "maxTsServerMemory": 8192
+                    }
+                }
+            }
+        }
+    },
+    "file_types": {
+        "JSONC": [".oxlintrc.json", ".oxfmtrc.json", "components.json", "tsconfig.json", "tsconfig.*.json"]
+    },
+    "file_scan_exclusions": [
+        "**/.git",
+        "**/node_modules",
+        "**/build",
+        "**/dist",
+        "**/Dotnet/bin",
+        "**/Dotnet/obj",
+        "**/Installer/build",
+        "**/*.min.js",
+        "**/package-lock.json"
+    ],
+    "file_scan_inclusions": [],
+    "search": {
+        "exclude": [
+            "**/node_modules",
+            "**/build",
+            "**/dist",
+            "**/Dotnet/bin",
+            "**/Dotnet/obj",
+            "**/package-lock.json"
+        ]
+    }
+}
