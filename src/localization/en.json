@@ -2163,7 +2163,8 @@
             "redeem": "Redeem",
             "create_animated_emoji": "Animated Emoji Generator",
             "crop_image": "Confirm Upload",
-            "drop_to_add": "Release to add"
+            "drop_to_add": "Release to add",
+            "drop_to_upload": "Drop to upload"
         },
         "image_crop": {
             "rotate_left": "Rotate Left",

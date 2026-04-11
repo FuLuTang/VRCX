@@ -610,7 +610,7 @@
         NumberFieldIncrement,
         NumberFieldInput
     } from '@/components/ui/number-field';
-    import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+    import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
     import { ButtonGroup } from '@/components/ui/button-group';
     import { Checkbox } from '@/components/ui/checkbox';
@@ -653,7 +653,8 @@
         stickerTable,
         printTable,
         emojiTable,
-        inventoryTable
+        inventoryTable,
+        pendingDrop
     } = storeToRefs(useGalleryStore());
     const {
         loadGalleryData,
@@ -719,6 +720,24 @@
         galleryDialogVisible.value = true;
         loadGalleryData();
     });
+
+    // Process pending drop from Feed page drag-and-drop
+    // Using watch instead of onMounted so it also works when already on the Gallery page
+    watch(pendingDrop, (drop) => {
+        if (!drop) return;
+        const { file, tab } = drop;
+        pendingDrop.value = null;
+        currentTab.value = tab;
+        nextTick(() => {
+            const handler = tabUploadHandlers[tab];
+            if (handler) {
+                const syntheticEvent = {
+                    dataTransfer: { files: [file] }
+                };
+                handler(syntheticEvent);
+            }
+        });
+    }, { immediate: true });
 
     onBeforeUnmount(() => {
         galleryDialogVisible.value = false;

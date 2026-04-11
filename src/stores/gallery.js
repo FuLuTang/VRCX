@@ -74,6 +74,9 @@ export const useGalleryStore = defineStore('Gallery', () => {
 
     const inventoryTable = ref([]);
 
+    /** @type {import('vue').Ref<{ file: File, tab: string } | null>} */
+    const pendingDrop = ref(null);
+
     const fullscreenImageDialog = ref({
         visible: false,
         imageUrl: '',
@@ -651,6 +654,7 @@ export const useGalleryStore = defineStore('Gallery', () => {
         emojiTable,
         inventoryTable,
         fullscreenImageDialog,
+        pendingDrop,
         cachedEmoji,
 
         showGalleryPage,
