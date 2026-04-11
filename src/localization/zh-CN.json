@@ -1807,7 +1807,8 @@
             "redeem": "兑换码兑换",
             "create_animated_emoji": "动画表情生成器",
             "drop_to_add": "松手以添加",
-            "drop_to_upload": "松手以上传"
+            "drop_to_upload": "松手以上传",
+            "drop_to_upload_hint": "拖入图片至当前面板 即可上传"
         },
         "gallery_select": {
             "header": "选择图片",

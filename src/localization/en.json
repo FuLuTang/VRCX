@@ -2164,7 +2164,8 @@
             "create_animated_emoji": "Animated Emoji Generator",
             "crop_image": "Confirm Upload",
             "drop_to_add": "Release to add",
-            "drop_to_upload": "Drop to upload"
+            "drop_to_upload": "Drop to upload",
+            "drop_to_upload_hint": "Drag and drop an image into this panel to upload"
         },
         "image_crop": {
             "rotate_left": "Rotate Left",

@@ -69,28 +69,31 @@
                         accept="image/*"
                         @change="onFileChangeGallery"
                         style="display: none" />
-                    <ButtonGroup>
-                        <Button variant="outline" size="sm" @click="refreshGalleryTable">
-                            <RefreshCw />
-                            {{ t('dialog.gallery_icons.refresh') }}
-                        </Button>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            :disabled="!isLocalUserVrcPlusSupporter || isUploading"
-                            @click="displayGalleryUpload">
-                            <Upload />
-                            {{ t('dialog.gallery_icons.upload') }}
-                        </Button>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            :disabled="!currentUser.profilePicOverride"
-                            @click="setProfilePicOverride('')">
-                            <X />
-                            {{ t('dialog.gallery_icons.clear') }}
-                        </Button>
-                    </ButtonGroup>
+                    <div class="flex items-center w-full">
+                        <ButtonGroup>
+                            <Button variant="outline" size="sm" @click="refreshGalleryTable">
+                                <RefreshCw />
+                                {{ t('dialog.gallery_icons.refresh') }}
+                            </Button>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                :disabled="!isLocalUserVrcPlusSupporter || isUploading"
+                                @click="displayGalleryUpload">
+                                <Upload />
+                                {{ t('dialog.gallery_icons.upload') }}
+                            </Button>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                :disabled="!currentUser.profilePicOverride"
+                                @click="setProfilePicOverride('')">
+                                <X />
+                                {{ t('dialog.gallery_icons.clear') }}
+                            </Button>
+                        </ButtonGroup>
+                        <span class="text-xs text-muted-foreground ml-auto whitespace-nowrap">{{ t('dialog.gallery_icons.drop_to_upload_hint') }}</span>
+                    </div>
                     <ItemGroup
                         class="grid gap-3 mt-3"
                         style="grid-template-columns: repeat(auto-fill, minmax(180px, 1fr))">
@@ -149,28 +152,31 @@
                         accept="image/*"
                         @change="onFileChangeVRCPlusIcon"
                         style="display: none" />
-                    <ButtonGroup>
-                        <Button variant="outline" size="sm" @click="refreshVRCPlusIconsTable">
-                            <RefreshCw />
-                            {{ t('dialog.gallery_icons.refresh') }}
-                        </Button>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            :disabled="!isLocalUserVrcPlusSupporter || isUploading"
-                            @click="displayVRCPlusIconUpload">
-                            <Upload />
-                            {{ t('dialog.gallery_icons.upload') }}
-                        </Button>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            :disabled="!currentUser.userIcon"
-                            @click="setVRCPlusIcon('')">
-                            <X />
-                            {{ t('dialog.gallery_icons.clear') }}
-                        </Button>
-                    </ButtonGroup>
+                    <div class="flex items-center w-full">
+                        <ButtonGroup>
+                            <Button variant="outline" size="sm" @click="refreshVRCPlusIconsTable">
+                                <RefreshCw />
+                                {{ t('dialog.gallery_icons.refresh') }}
+                            </Button>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                :disabled="!isLocalUserVrcPlusSupporter || isUploading"
+                                @click="displayVRCPlusIconUpload">
+                                <Upload />
+                                {{ t('dialog.gallery_icons.upload') }}
+                            </Button>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                :disabled="!currentUser.userIcon"
+                                @click="setVRCPlusIcon('')">
+                                <X />
+                                {{ t('dialog.gallery_icons.clear') }}
+                            </Button>
+                        </ButtonGroup>
+                        <span class="text-xs text-muted-foreground ml-auto whitespace-nowrap">{{ t('dialog.gallery_icons.drop_to_upload_hint') }}</span>
+                    </div>
                     <ItemGroup
                         class="grid gap-3 mt-3"
                         style="grid-template-columns: repeat(auto-fill, minmax(160px, 1fr))">
@@ -271,6 +277,7 @@
                                 <Checkbox v-model="emojiAnimType" />
                                 <span>{{ t('dialog.gallery_icons.emoji_animation_type') }}</span>
                             </label>
+                            <span class="text-xs text-muted-foreground ml-auto whitespace-nowrap">{{ t('dialog.gallery_icons.drop_to_upload_hint') }}</span>
                         </div>
                         <div v-if="emojiAnimType" class="flex items-center gap-2">
                             <Button size="sm" variant="outline" @click="openExternalLink('https://vrcemoji.com')">
@@ -375,20 +382,23 @@
                         accept="image/*"
                         @change="onFileChangeSticker"
                         style="display: none" />
-                    <ButtonGroup>
-                        <Button variant="outline" size="sm" @click="refreshStickerTable">
-                            <RefreshCw />
-                            {{ t('dialog.gallery_icons.refresh') }}
-                        </Button>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            :disabled="!isLocalUserVrcPlusSupporter || isUploading"
-                            @click="displayStickerUpload">
-                            <Upload />
-                            {{ t('dialog.gallery_icons.upload') }}
-                        </Button>
-                    </ButtonGroup>
+                    <div class="flex items-center w-full">
+                        <ButtonGroup>
+                            <Button variant="outline" size="sm" @click="refreshStickerTable">
+                                <RefreshCw />
+                                {{ t('dialog.gallery_icons.refresh') }}
+                            </Button>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                :disabled="!isLocalUserVrcPlusSupporter || isUploading"
+                                @click="displayStickerUpload">
+                                <Upload />
+                                {{ t('dialog.gallery_icons.upload') }}
+                            </Button>
+                        </ButtonGroup>
+                        <span class="text-xs text-muted-foreground ml-auto whitespace-nowrap">{{ t('dialog.gallery_icons.drop_to_upload_hint') }}</span>
+                    </div>
                     <ItemGroup
                         class="grid gap-3 mt-3"
                         style="grid-template-columns: repeat(auto-fill, minmax(160px, 1fr))">
@@ -465,6 +475,7 @@
                             <Checkbox v-model="printCropBorder" />
                             <span>{{ t('dialog.gallery_icons.crop_print_border') }}</span>
                         </label>
+                        <span class="text-xs text-muted-foreground ml-auto whitespace-nowrap">{{ t('dialog.gallery_icons.drop_to_upload_hint') }}</span>
                     </div>
                     <ItemGroup
                         class="grid gap-3 mt-3"
